@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c0d0ef77ac0a8441adc234b780bb3f1, type: 3}
+  m_Name: TestIKEA_ViewerItem
+  m_EditorClassIdentifier: com.fuzzphyte.modelviewer::FuzzPhyte.ModelViewer.FP_ModelViewerItemData
+  UniqueID: 4e6a9ce2-2a85-45c4-baeb-05fc018e4627
+  _displayName: TestIKEA
+  _description: 
+  _tags:
+  - {fileID: 11400000, guid: 92f1d0f65446ea34ca708f021a35f1d9, type: 2}
+  - {fileID: 11400000, guid: 348e58692efadb1488518d5cf909c7b6, type: 2}
+  _modelDisplayData: {fileID: 11400000, guid: 5aa78c543cd32374bae793030aea3658, type: 2}
+  _includedPrefab: {fileID: 8231612624078917146, guid: 99c20b54283815c4db5b6738fd3ece8e, type: 3}
+  _assetKey: 
+  _downloadUrl: 
+  _defaultView: 6
+  _coverView: 6
+  _thumbnails:
+  - _view: 0
+    _texture: {fileID: 2800000, guid: 064769f96da950f4ea91cda562f2ce73, type: 3}
+    _caption: Front
+  - _view: 1
+    _texture: {fileID: 2800000, guid: 7d0563433cd4a6848872bc35f417ce6a, type: 3}
+    _caption: Back
+  - _view: 6
+    _texture: {fileID: 2800000, guid: 1698864000f1ad64b925777edce3d4fc, type: 3}
+    _caption: Top Front Right
+  - _view: 7
+    _texture: {fileID: 2800000, guid: f8e38dadaa148184f9d2fb7cf99d5190, type: 3}
+    _caption: Top Front Left

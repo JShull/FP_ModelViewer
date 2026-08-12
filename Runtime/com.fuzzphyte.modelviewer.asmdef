@@ -4,10 +4,7 @@
     "references": [
         "com.fuzzphyte.utility",
         "com.fuzzphyte.ui",
-        "com.fuzzphyte.placement",
-        "com.fuzzphyte.ui.toolkit",
-        "UnityEngine.UI",
-        "Unity.Mathematics"
+        "com.fuzzphyte.placement"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

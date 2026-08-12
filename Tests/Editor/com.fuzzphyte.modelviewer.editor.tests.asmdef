@@ -1,0 +1,26 @@
+{
+    "name": "com.fuzzphyte.modelviewer.editor.tests",
+    "rootNamespace": "FuzzPhyte.ModelViewer.Tests",
+    "references": [
+        "com.fuzzphyte.modelviewer",
+        "com.fuzzphyte.modelviewer.editor",
+        "com.fuzzphyte.placement",
+        "com.fuzzphyte.utility"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false,
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ]
+}

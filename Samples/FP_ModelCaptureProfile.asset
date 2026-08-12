@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3322418246e112843ab955126f175d98, type: 3}
+  m_Name: FP_ModelCaptureProfile
+  m_EditorClassIdentifier: com.fuzzphyte.modelviewer::FuzzPhyte.ModelViewer.FP_ModelCaptureProfile
+  UniqueID: ModelCapProfile_FP
+  _width: 768
+  _height: 768
+  _projection: 1
+  _fieldOfView: 60
+  _boundsPadding: 1
+  _captureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  _captureSpace: 0
+  _lightingMode: 0
+  _frontLightAppearance: 1
+  _frontLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _frontLightTemperature: 3500
+  _frontLightIntensity: 2
+  _frontLightSpotAngle: 55
+  _backLightAppearance: 1
+  _backLightColor: {r: 0.72, g: 0.82, b: 1, a: 1}
+  _backLightTemperature: 5000
+  _backLightIntensity: 1
+  _backLightSpotAngle: 60
+  _directionalLightAppearance: 0
+  _directionalLightColor: {r: 1, g: 1, b: 1, a: 1}
+  _directionalLightTemperature: 6500
+  _directionalLightIntensity: 0.75
+  _ambientColor: {r: 0.08, g: 0.08, b: 0.08, a: 1}
+  _lightDistanceMultiplier: 2.5
+  _lightShadows: 2
+  _backgroundMode: 0
+  _backgroundColor: {r: 0, g: 0, b: 0, a: 1}

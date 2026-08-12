@@ -1,14 +1,10 @@
 {
     "name": "com.fuzzphyte.modelviewer.editor",
-    "rootNamespace": "",
+    "rootNamespace": "FuzzPhyte.ModelViewer.Editor",
     "references": [
-        "GUID:b2274f1409ce26f40919f89f9d4f667c",
-        "GUID:8729f3cadef284ac4bc6fd994d431e7a",
-        "GUID:0099dc65703fd7a438377e2ff8c514ba",
-        "GUID:2bafac87e7f4b9b418d9448d219b01ab",
-        "GUID:a9bffab694a06ab4f8716dae1088fbd2",
-        "GUID:0c93aa7ff0eaf4bfc97f5a85c1d8c297",
-        "GUID:a3769860301af450a90435d3b75e511f"
+        "com.fuzzphyte.modelviewer",
+        "com.fuzzphyte.utility",
+        "com.fuzzphyte.placement"
     ],
     "includePlatforms": [
         "Editor"

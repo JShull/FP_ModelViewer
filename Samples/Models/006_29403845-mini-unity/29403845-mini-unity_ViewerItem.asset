@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c0d0ef77ac0a8441adc234b780bb3f1, type: 3}
+  m_Name: 29403845-mini-unity_ViewerItem
+  m_EditorClassIdentifier: com.fuzzphyte.modelviewer::FuzzPhyte.ModelViewer.FP_ModelViewerItemData
+  UniqueID: b0ebf465-1cdb-4182-86fd-c44cd248c8e3
+  _displayName: 29403845-mini-unity
+  _description: 
+  _tags:
+  - {fileID: 11400000, guid: 92f1d0f65446ea34ca708f021a35f1d9, type: 2}
+  - {fileID: 11400000, guid: 348e58692efadb1488518d5cf909c7b6, type: 2}
+  _modelDisplayData: {fileID: 11400000, guid: 40ffaffd954c5524f827d5c27cba7887, type: 2}
+  _includedPrefab: {fileID: 4956467627976226681, guid: 1d9dbb7333499fe41a228a5be884eb76, type: 3}
+  _assetKey: 
+  _downloadUrl: 
+  _defaultView: 6
+  _coverView: 6
+  _thumbnails:
+  - _view: 0
+    _texture: {fileID: 2800000, guid: 3d60343b266f17b409c449d40d9f346f, type: 3}
+    _caption: Front
+  - _view: 1
+    _texture: {fileID: 2800000, guid: b9b1e384042bb2e4b8e879cc4e0591a7, type: 3}
+    _caption: Back
+  - _view: 6
+    _texture: {fileID: 2800000, guid: b33a436df6a75d347b85ab807b7d91ef, type: 3}
+    _caption: Top Front Right
+  - _view: 7
+    _texture: {fileID: 2800000, guid: 27a0c4e24a73f87418f4f62fb429237c, type: 3}
+    _caption: Top Front Left
