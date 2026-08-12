@@ -1,0 +1,43 @@
+{
+    "name": "com.fuzzphyte.modelviewer",
+    "version": "0.1.0",
+    "displayName": "FP ModelViewer",
+    "description": "FP ModelViewer is a tool to build and deploy unity environments for modeling viewing.",
+    "unity": "6000.4",
+    "unityRelease": "3f1",
+    "documentationUrl": "https://github.com/jshull/FP_ModelViewer/blob/main/README.md",
+    "changelogUrl": "https://github.com/JShull/FP_ModelViewer/blob/main/CHANGELOG.md",
+    "licensesUrl": "https://github.com/jshull/FP_ModelViewer/blob/main/LICENSE.md",
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/jshull/FP_ModelViewer.git"
+    },
+    "dependencies": {
+      "com.unity.mathematics": "1.3.2",
+      "com.unity.textmeshpro": "3.0.9",
+      "com.unity.shadergraph":"17.1.0",
+      "com.unity.splines":"2.8.1",
+      "com.unity.timeline":"1.8.9",
+      "com.unity.ugui":"2.0.0",
+      "com.unity.inputsystem":"1.14.0"
+    },
+    "samples": [
+      {
+        "displayName": "Samples",
+        "description": "Base Sample setup scene for testing",
+        "path": "Samples~/ModelViewer"
+      }
+    ],
+    "keywords": [
+      "ScriptableObject",
+      "FuzzPhyte",
+      "Utility",
+      "Model Viewer"
+    ],
+    "author": {
+      "name": "John Shull",
+      "email": "the.john.shull@gmail.com",
+      "url": "https://github.com/jshull"
+    },
+    "type": "tool"
+  }

@@ -1,0 +1,21 @@
+{
+    "name": "com.fuzzphyte.modelviewer",
+    "rootNamespace": "FuzzPhyte.ModelViewer",
+    "references": [
+        "com.fuzzphyte.utility",
+        "com.fuzzphyte.ui",
+        "com.fuzzphyte.placement",
+        "com.fuzzphyte.ui.toolkit",
+        "UnityEngine.UI",
+        "Unity.Mathematics"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
