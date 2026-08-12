@@ -35,6 +35,18 @@ namespace FuzzPhyte.ModelViewer
             return (itemCount + itemsPerPage - 1) / itemsPerPage;
         }
 
+        public static int GetSquareGridColumns(int itemCount)
+        {
+            return itemCount <= 0 ? 0 : UnityEngine.Mathf.CeilToInt(
+                UnityEngine.Mathf.Sqrt(itemCount));
+        }
+
+        public static int GetSquareGridRows(int itemCount)
+        {
+            int columns = GetSquareGridColumns(itemCount);
+            return columns == 0 ? 0 : (itemCount + columns - 1) / columns;
+        }
+
         public static int ClampPageIndex(int pageIndex, int itemCount, int rows, int columns)
         {
             int pageCount = GetPageCount(itemCount, rows, columns);

@@ -24,6 +24,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added a draggable Unity-derived Kelvin color gradient and precise numeric temperature entry to the capture-profile inspector.
 - Replaced viewer-item string tags with reusable FP Utility `FP_Tag` asset references and added runtime tag-membership helpers.
 - Added a collapsible source table with three optional `FP_Tag` assignments per source and automatic tag synchronization during generation.
+- Added `FP_ModelViewerGridUI`, a catalog-fed UI Toolkit grid that generates rows, columns, panels, cover-image buttons, navigation, and selection/page events from runtime parameters.
+- Added host-relative Top, Right, Bottom, and Left percentage insets for positioning the complete generated grid within selected screen space.
+- Added configurable catalog-cell background color, text color, and rounded corners.
+- Added a dimmed selected-item popup with automatic near-square thumbnail layout, configurable popup styling, Back to Catalog, and included-prefab spawning at a supplied Transform.
+- Added popup-close and item-spawned Inspector/C# events plus deterministic layout and spawn coverage.
+- Anchored popup thumbnail captions as shaded footers inside their responsive image tiles.
+- Added persistent Hide/Show Catalog controls, optional hide-after-spawn behavior, and catalog-visibility events for unobstructed 3D viewing.
+- Changed built-in spawning to manage one viewer-owned instance at a time, replacing the prior spawn and exposing explicit removal plus removal events.
 
 ### Changed
 

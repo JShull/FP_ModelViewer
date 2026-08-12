@@ -44,5 +44,21 @@ namespace FuzzPhyte.ModelViewer.Tests
             Assert.That(range.StartIndex, Is.EqualTo(8));
             Assert.That(range.Count, Is.EqualTo(2));
         }
+
+        [TestCase(1, 1, 1)]
+        [TestCase(5, 3, 2)]
+        [TestCase(14, 4, 4)]
+        public void SquareGrid_ExpandsForItemCount(
+            int itemCount,
+            int expectedColumns,
+            int expectedRows)
+        {
+            Assert.That(
+                FP_ModelViewerPagination.GetSquareGridColumns(itemCount),
+                Is.EqualTo(expectedColumns));
+            Assert.That(
+                FP_ModelViewerPagination.GetSquareGridRows(itemCount),
+                Is.EqualTo(expectedRows));
+        }
     }
 }

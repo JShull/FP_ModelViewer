@@ -14,6 +14,7 @@ FP Model Viewer is a data-driven catalog, thumbnail, and model-viewing package f
 - `FP_ModelViewerBinding` connects catalog item data to an existing `FP_ModelDisplayBinding` in a scene.
 - `FP_ModelThumbnailCaptureUtility` captures any of the six face or eight corner views into an in-memory `Texture2D` at runtime or in the Editor.
 - `FP_ModelViewerPagination` provides deterministic page ranges for grid and horizontal-strip layouts.
+- `FP_ModelViewerGridUI` derives from the FP UI Toolkit base and generates a catalog-backed grid, all required panels, item buttons, and previous/next navigation at runtime.
 
 The capture utility uses a caller-owned camera. Isolate the target with the profile's capture layer mask or place a temporary model copy on a dedicated capture layer. The utility restores the camera transform, projection, clipping, background, culling mask, and render target after every capture.
 
@@ -66,9 +67,27 @@ Each front, back, and directional rig light has a Unity-style `Appearance` optio
 
 Prefab assets do not have to be placed in the open scene. The builder temporarily instantiates them for capture. Auto setup can add and save the binding on an editable `.prefab` asset. Imported model prefabs are immutable; place one beneath an editable wrapper prefab before running auto setup. If a prefab is skipped without producing PNGs, confirm that its root or a child contains `FP_ModelDisplayBinding` and that the binding references an `FP_ModelDisplayData` asset. The builder reports both missing requirements beside the affected source before generation.
 
+## Runtime UI Grid
+
+`FP_ModelViewerGridUI` is the first runtime catalog-viewer component. Add a `UIDocument` and `FP_ModelViewerGridUI` to a scene object, then assign the inherited `Document` and `Document Style Sheet` references plus a generated catalog. The document can be empty, or **Host Element Name** can target a named element inside an authored UXML document.
+
+Set **Rows** and **Columns** to control panel capacity. The component uses `FP_ModelViewerPagination` to create every required panel; for example, 50 items in a 3x3 layout create six panels, while a 1x5 layout produces a horizontal five-item strip per panel. Only the active panel is displayed. Cover thumbnails and item names populate each button, and the final panel receives empty layout cells so its grid alignment remains stable.
+
+Use **Container Insets (%)** to reserve screen space around the complete generated grid. Top and Bottom are percentages of the host height; Left and Right are percentages of the host width. All four default to zero, preserving the full-host layout. For example, Top `60`, Right `5`, Bottom `5`, and Left `5` places the viewer in the lower portion of a full-screen host with a five-percent border on the other sides. Opposing inset pairs are normalized when their total exceeds 99 percent so the grid always retains visible space. The same values can be changed at runtime with `SetContainerInsetsPercent(top, right, bottom, left)`.
+
+**Item Cell Style** provides a background color, text color, and pixel corner radius for generated catalog cells. The corner radius clips cell contents so thumbnail and label presentation follow the rounded silhouette. These values remain compatible with the `.fp-model-viewer-grid__item` USS class and can also be changed with `SetItemCellStyle`.
+
+The generated hierarchy includes functional inline layout and stable USS classes rooted at `.fp-model-viewer-grid`, so applications can completely restyle it without replacing its runtime logic. Use the Inspector-facing **On Item Selected**, **On Page Changed**, and **On Grid Rebuilt** events or the corresponding C# events. `SetCatalog`, `SetGridDimensions`, `SetContainerInsetsPercent`, `GoToPage`, `NextPage`, `PreviousPage`, `SelectItem`, and `Refresh` support application-driven control.
+
+Selecting an item opens a modal detail popup over the entire UI host. **Popup Backdrop Color** controls the dimmed scene/catalog background, including its alpha. The panel color, text color, corner radius, width percentage, and height percentage are also configurable. All non-null item thumbnails are arranged automatically into a near-square grid: five images use three columns and two rows, while all 14 supported views use four columns and four rows. Each view caption is anchored as a shaded footer inside its square image tile, so smaller screens cannot separate the caption from its thumbnail. The grid scrolls vertically when its content exceeds the popup height.
+
+The popup provides **Back to Catalog** and **Spawn Item** actions. Assign **Spawn Target** to the scene `Transform` whose world position and rotation define the deployment area. Spawn Item is enabled only when the selected item has an `Included Prefab` and a target is assigned. The component can parent the new instance to that target and close the popup after spawning. The grid owns one spawned instance at a time: a successful new spawn removes the instance it previously created before placing the replacement. `SpawnedItem` exposes the active instance, and `RemoveSpawnedItem` clears it explicitly. Unrelated children and scene objects are never removed. **On Item Spawned** and **On Spawned Item Removed** are available as Inspector and C# events. External asset keys and download URLs remain application-owned; the built-in spawn action currently instantiates only `Included Prefab`.
+
+Enable **Show Catalog Visibility Button** to keep a compact Hide/Show control available at the lower-left of the UI host. Hiding affects only the generated catalog container, leaving the spawned 3D object and restore button visible. **Hide Catalog After Spawn** can perform that transition automatically after a successful spawn. `HideCatalog`, `ShowCatalog`, `ToggleCatalogVisibility`, and `SetHideCatalogAfterSpawn` support the same flow from code; **On Catalog Visibility Changed** can coordinate camera or interaction systems. Popup behavior remains available through `SetSpawnTarget`, `ShowItemDetails`, `CloseItemDetails`, and `SpawnSelectedItem`, with **On Popup Closed** for listeners.
+
 ## Planned UI Workflow
 
-A UI Toolkit viewer derived from `FP_UI` will render configurable paged grids, item-detail popups, and application-defined action rows from the generated catalog.
+The next UI slice can connect spawned items to the orbital camera/viewing workflow and generalize the popup action row for download and project-specific actions.
 
 ## Dependencies
 

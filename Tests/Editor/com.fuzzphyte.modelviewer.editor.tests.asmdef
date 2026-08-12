@@ -5,7 +5,8 @@
         "com.fuzzphyte.modelviewer",
         "com.fuzzphyte.modelviewer.editor",
         "com.fuzzphyte.placement",
-        "com.fuzzphyte.utility"
+        "com.fuzzphyte.utility",
+        "com.fuzzphyte.ui"
     ],
     "includePlatforms": [
         "Editor"
