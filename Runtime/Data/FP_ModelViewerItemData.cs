@@ -69,6 +69,31 @@ namespace FuzzPhyte.ModelViewer
             return false;
         }
 
+        public bool HasAllTags(IReadOnlyList<FP_Tag> tags)
+        {
+            if (tags == null)
+            {
+                return false;
+            }
+
+            bool hasValidTag = false;
+            for (int i = 0; i < tags.Count; i++)
+            {
+                if (tags[i] == null)
+                {
+                    continue;
+                }
+
+                hasValidTag = true;
+                if (!HasTag(tags[i]))
+                {
+                    return false;
+                }
+            }
+
+            return hasValidTag;
+        }
+
         public bool TryGetThumbnail(FP_ViewCubeHit view, out Texture2D texture)
         {
             for (int i = 0; i < _thumbnails.Count; i++)

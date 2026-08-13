@@ -99,6 +99,14 @@ namespace FuzzPhyte.ModelViewer.Tests
                     Is.True);
                 Assert.That(item.HasAnyTag(new[] { outdoor }), Is.False);
                 Assert.That(item.HasAnyTag(null), Is.False);
+                Assert.That(
+                    item.HasAllTags(new FP_Tag[] { null, furniture }),
+                    Is.True);
+                Assert.That(
+                    item.HasAllTags(new[] { furniture, outdoor }),
+                    Is.False);
+                Assert.That(item.HasAllTags(new FP_Tag[] { null }), Is.False);
+                Assert.That(item.HasAllTags(null), Is.False);
             }
             finally
             {

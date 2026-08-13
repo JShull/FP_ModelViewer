@@ -238,10 +238,32 @@ MonoBehaviour:
   _showItemNames: 1
   _showNavigation: 1
   _wrapNavigation: 1
+  _catalogTitleOverride: Fuzz Tests
+  _logoSprite: {fileID: 21300000, guid: b521bf5d6ffa177458e7c14188bbf89d, type: 3}
+  _logoPlacement: 2
+  _logoSize: {x: 128, y: 128}
+  _logoOffset: {x: 16, y: 16}
+  _showCatalogVisibilityButton: 1
+  _hideCatalogLabel: Hide Catalog
+  _showCatalogLabel: Show Catalog
+  _hideCatalogAfterSpawn: 0
+  _showTagFilterButton: 1
+  _tagFilterColumns: 2
+  _tagFilterMaxCharacters: 15
+  _tagFilterPanelWidthPercent: 50
+  _tagFilterPanelHeightPercent: 65
+  _tagFilterPanelColor: {r: 0.12, g: 0.12, b: 0.12, a: 0.98}
+  _tagFilterButtonColor: {r: 0.25, g: 0.25, b: 0.25, a: 1}
+  _selectedTagFilterColor: {r: 0.12, g: 0.45, b: 0.78, a: 1}
   _itemCellColor: {r: 0, g: 0, b: 0, a: 1}
   _itemTextColor: {r: 1, g: 1, b: 1, a: 1}
   _itemCornerRadius: 15
-  _topInsetPercent: 60
+  _buttonCornerRadius: 15
+  _buttonTextColor: {r: 1, g: 1, b: 1, a: 1}
+  _buttonBackgroundColor: {r: 0.12156863, g: 0.1254902, b: 0.12941177, a: 1}
+  _buttonHoverColor: {r: 0.3962264, g: 0.3962264, b: 0.3962264, a: 1}
+  _buttonSelectedColor: {r: 0.12, g: 0.45, b: 0.78, a: 1}
+  _topInsetPercent: 65
   _rightInsetPercent: 5
   _bottomInsetPercent: 0
   _leftInsetPercent: 5
@@ -268,6 +290,15 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   _onPopupClosed:
+    m_PersistentCalls:
+      m_Calls: []
+  _onSpawnedItemRemoved:
+    m_PersistentCalls:
+      m_Calls: []
+  _onCatalogVisibilityChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  _onTagFiltersChanged:
     m_PersistentCalls:
       m_Calls: []
 --- !u!4 &793804043
@@ -685,7 +716,7 @@ Transform:
   m_GameObject: {fileID: 1200611684}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.53, y: 0.32, z: -2.82}
+  m_LocalPosition: {x: 2.53, y: 0.1, z: -1.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -727,8 +758,8 @@ Camera:
   m_GameObject: {fileID: 1795236353}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0.46226418, g: 0.46226418, b: 0.46226418, a: 0}
   m_projectionMatrixMode: 2
   m_GateFitMode: 2
   m_FOVAxisMode: 0

@@ -18,7 +18,7 @@ FP Model Viewer is a data-driven catalog, thumbnail, and model-viewing package f
 
 The capture utility uses a caller-owned camera. Isolate the target with the profile's capture layer mask or place a temporary model copy on a dedicated capture layer. The utility restores the camera transform, projection, clipping, background, culling mask, and render target after every capture.
 
-Item tags use `FuzzPhyte.Utility.Meta.FP_Tag` ScriptableObject references rather than strings. Runtime filtering can use `HasTag` or `HasAnyTag`, which compare stable Unity asset identity and safely ignore null filter entries.
+Item tags use `FuzzPhyte.Utility.Meta.FP_Tag` ScriptableObject references rather than strings. Runtime filtering can use `HasTag`, `HasAnyTag`, or `HasAllTags`, which compare stable Unity asset identity and safely ignore null filter entries.
 
 Existing viewer items with empty string-tag lists migrate cleanly to the asset-reference list. Any previously populated string tags must be replaced manually with the intended `FP_Tag` assets because a string cannot be mapped reliably to a unique asset reference.
 
@@ -71,23 +71,51 @@ Prefab assets do not have to be placed in the open scene. The builder temporaril
 
 `FP_ModelViewerGridUI` is the first runtime catalog-viewer component. Add a `UIDocument` and `FP_ModelViewerGridUI` to a scene object, then assign the inherited `Document` and `Document Style Sheet` references plus a generated catalog. The document can be empty, or **Host Element Name** can target a named element inside an authored UXML document.
 
-Set **Rows** and **Columns** to control panel capacity. The component uses `FP_ModelViewerPagination` to create every required panel; for example, 50 items in a 3x3 layout create six panels, while a 1x5 layout produces a horizontal five-item strip per panel. Only the active panel is displayed. Cover thumbnails and item names populate each button, and the final panel receives empty layout cells so its grid alignment remains stable.
+Set **Rows** and **Columns** to control maximum panel capacity. The component uses `FP_ModelViewerPagination` to create every required panel; for example, 50 items in a 3x3 layout create six panels, while a 1x5 layout produces a horizontal five-item strip per panel. Only the active panel is displayed. Cover thumbnails and item names populate each button. Partial pages and filtered results generate only their real items; each populated row divides its available width evenly without placeholder cells or unused rows.
+
+Use **Branding > Catalog Title Override** to replace the catalog asset's display name in the generated heading. Leaving it empty keeps the catalog display name. Assign an optional Sprite to **Logo Sprite**, select Top Left, Top Center, or Top Right, and set its pixel size and offset to place a non-interactive logo along the top edge of the UI host. Because the logo is hosted outside the catalog container, it remains visible when the catalog is hidden. `SetCatalogTitle`, `SetLogo`, and `ClearLogo` update the currently generated UI at runtime.
 
 Use **Container Insets (%)** to reserve screen space around the complete generated grid. Top and Bottom are percentages of the host height; Left and Right are percentages of the host width. All four default to zero, preserving the full-host layout. For example, Top `60`, Right `5`, Bottom `5`, and Left `5` places the viewer in the lower portion of a full-screen host with a five-percent border on the other sides. Opposing inset pairs are normalized when their total exceeds 99 percent so the grid always retains visible space. The same values can be changed at runtime with `SetContainerInsetsPercent(top, right, bottom, left)`.
 
 **Item Cell Style** provides a background color, text color, and pixel corner radius for generated catalog cells. The corner radius clips cell contents so thumbnail and label presentation follow the rounded silhouette. These values remain compatible with the `.fp-model-viewer-grid__item` USS class and can also be changed with `SetItemCellStyle`.
 
+**Button Style** applies shared text, normal background, hover, selected/pressed, corner-radius, and outline-thickness values to every generated control button: Filters, Clear, Close, Previous, Next, popup actions, and Hide/Show Catalog. The selected color is used while pressing a button or when it receives keyboard focus. Item cells retain their independent styling. Use `SetButtonColors`, `SetButtonCornerRadius`, `SetButtonOutlineThickness`, or either `SetButtonStyle` overload to update all currently generated controls at runtime without rebuilding the UI.
+
+```csharp
+grid.SetButtonStyle(
+    textColor: Color.white,
+    backgroundColor: new Color(0.15f, 0.15f, 0.15f),
+    hoverColor: new Color(0.25f, 0.25f, 0.25f),
+    selectedColor: new Color(0.1f, 0.45f, 0.8f),
+    cornerRadius: 10f,
+    outlineThickness: 2f);
+```
+
 The generated hierarchy includes functional inline layout and stable USS classes rooted at `.fp-model-viewer-grid`, so applications can completely restyle it without replacing its runtime logic. Use the Inspector-facing **On Item Selected**, **On Page Changed**, and **On Grid Rebuilt** events or the corresponding C# events. `SetCatalog`, `SetGridDimensions`, `SetContainerInsetsPercent`, `GoToPage`, `NextPage`, `PreviousPage`, `SelectItem`, and `Refresh` support application-driven control.
 
 Selecting an item opens a modal detail popup over the entire UI host. **Popup Backdrop Color** controls the dimmed scene/catalog background, including its alpha. The panel color, text color, corner radius, width percentage, and height percentage are also configurable. All non-null item thumbnails are arranged automatically into a near-square grid: five images use three columns and two rows, while all 14 supported views use four columns and four rows. Each view caption is anchored as a shaded footer inside its square image tile, so smaller screens cannot separate the caption from its thumbnail. The grid scrolls vertically when its content exceeds the popup height.
 
-The popup provides **Back to Catalog** and **Spawn Item** actions. Assign **Spawn Target** to the scene `Transform` whose world position and rotation define the deployment area. Spawn Item is enabled only when the selected item has an `Included Prefab` and a target is assigned. The component can parent the new instance to that target and close the popup after spawning. The grid owns one spawned instance at a time: a successful new spawn removes the instance it previously created before placing the replacement. `SpawnedItem` exposes the active instance, and `RemoveSpawnedItem` clears it explicitly. Unrelated children and scene objects are never removed. **On Item Spawned** and **On Spawned Item Removed** are available as Inspector and C# events. External asset keys and download URLs remain application-owned; the built-in spawn action currently instantiates only `Included Prefab`.
+The popup provides **Back to Catalog**, **Spawn Item**, and optional **Download OBJ** actions. Assign **Spawn Target** to the scene `Transform` whose world position and rotation define the deployment area. Spawn Item is enabled only when the selected item has an `Included Prefab` and a target is assigned. The component can parent the new instance to that target and close the popup after spawning. The grid owns one spawned instance at a time: a successful new spawn removes the instance it previously created before placing the replacement. `SpawnedItem` exposes the active instance, and `RemoveSpawnedItem` clears it explicitly. Unrelated children and scene objects are never removed. **On Item Spawned** and **On Spawned Item Removed** are available as Inspector and C# events. External asset keys and download URLs remain application-owned; the built-in spawn action currently instantiates only `Included Prefab`.
+
+### Runtime OBJ Download
+
+Enable **Show Obj Export Button** to let a user download the selected included prefab's mesh hierarchy. If that same item is currently spawned, the exporter uses the live spawned instance so its current transforms and skinned-mesh pose are captured; otherwise it creates a temporary prefab instance for the export. The generated ZIP contains an OBJ and optional MTL/PNG files. MeshFilters and submeshes are included by default, with separate options for inactive children, skinned meshes, mesh colliders, material data, and texture snapshots.
+
+**Maximum Vertex Count** defaults to 500,000 to reject unexpectedly large in-memory exports before they pressure a WebGL heap; set it to zero for no limit. **Maximum Texture Size** caps optional PNG readback. Imported meshes need **Read/Write** enabled. Texture export is off by default because GPU readback, PNG encoding, and ZIP creation temporarily coexist in memory. The result exports geometry rather than the whole Unity prefab: scripts, audio, text components, animations, and other runtime behavior are not included.
+
+On WebGL, **Download OBJ** creates a browser Blob and starts a normal user download. On iOS it opens the Files export picker. Other players and the Editor save a unique ZIP beneath `Application.persistentDataPath/FP_Exports`. `TryBuildSelectedItemObjPackage` exposes generation without delivery, while `ExportSelectedItemObj` performs both stages. **On Obj Exported** reports the downloaded filename or saved path; **On Obj Export Failed** reports a readable error. The matching C# events are `ObjExported` and `ObjExportFailed`, and `SetObjExportEnabled` plus `SetObjExportSettings` support runtime configuration.
 
 Enable **Show Catalog Visibility Button** to keep a compact Hide/Show control available at the lower-left of the UI host. Hiding affects only the generated catalog container, leaving the spawned 3D object and restore button visible. **Hide Catalog After Spawn** can perform that transition automatically after a successful spawn. `HideCatalog`, `ShowCatalog`, `ToggleCatalogVisibility`, and `SetHideCatalogAfterSpawn` support the same flow from code; **On Catalog Visibility Changed** can coordinate camera or interaction systems. Popup behavior remains available through `SetSpawnTarget`, `ShowItemDetails`, `CloseItemDetails`, and `SpawnSelectedItem`, with **On Popup Closed** for listeners.
 
+### Tag Filtering
+
+Enable **Show Tag Filter Button** to add a compact Filters control to the catalog. It opens and closes a scrollable tag drawer generated from the current catalog's item tags. Each `FP_Tag` asset appears once regardless of how many items reference it. Tags use independently selectable radio-style toggles with fixed circular indicators, making their selected state visible while preserving multi-tag filtering. Selecting a tag filters immediately and resets the viewer to the first panel; selecting multiple tags uses joined AND matching, so an item remains visible only when it has every selected tag. Select an active tag again to remove it, or use **Clear** to remove every selection and restore the complete catalog.
+
+**Tag Filter Columns** controls how many filter buttons appear across each row. Cells divide the available row width evenly without horizontal overflow, and the drawer scrolls vertically only. **Tag Filter Max Characters** limits visible button text and adds an ellipsis when required; the complete tag name remains available as the button tooltip. Panel width and height percentages, panel color, unselected button color, and selected button color are also configurable. `ShowTagFilterPanel`, `HideTagFilterPanel`, `ToggleTagFilterPanel`, `ToggleTagFilter`, `ClearTagFilters`, and `SetTagFilterLayout` expose the workflow to code. `CatalogTags`, `ActiveTagFilters`, and `VisibleItemCount` expose the current state, while **On Tag Filters Changed** reports the new visible-item count and the C# event supplies the active tag collection.
+
 ## Planned UI Workflow
 
-The next UI slice can connect spawned items to the orbital camera/viewing workflow and generalize the popup action row for download and project-specific actions.
+The next UI slice can connect spawned items to the orbital camera/viewing workflow and generalize the remaining popup action row for project-specific actions.
 
 ## Dependencies
 

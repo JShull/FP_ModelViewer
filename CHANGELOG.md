@@ -32,6 +32,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Anchored popup thumbnail captions as shaded footers inside their responsive image tiles.
 - Added persistent Hide/Show Catalog controls, optional hide-after-spawn behavior, and catalog-visibility events for unobstructed 3D viewing.
 - Changed built-in spawning to manage one viewer-owned instance at a time, replacing the prior spawn and exposing explicit removal plus removal events.
+- Added a hideable, scrollable catalog-tag filter drawer with duplicate-free tag discovery, immediate joined matching, reset controls, configurable columns, and truncated labels with full tooltips.
+- Added tag-filter runtime APIs, state accessors, visible-item-count events, and deterministic filtering/layout coverage.
+- Added a shared rounded-corner parameter for every generated navigation, filter, popup-action, and catalog-visibility button.
+- Replaced tag filter action buttons with independently selectable radio-style toggles while preserving immediate joined multi-tag filtering.
+- Extended filtering coverage to assert the actual rendered grid cells after UI-driven tag selection.
+- Added shared text, normal background, hover, and selected/pressed colors for every generated control button, with immediate runtime setters and pointer/focus-state coverage.
+- Added a catalog-title override and optional host-level Sprite logo with top-left, top-center, or top-right placement plus runtime branding setters.
+- Constrained only the tag-filter checkmark element to fixed circular geometry so responsive rows cannot stretch it or clip tag text.
+- Changed tag-filter rows to equal flex-width cells and vertical-only scrolling, preventing percentage margins from creating a horizontal scrollbar.
+- Removed empty catalog placeholder cells and unused rows so partial pages and filtered results distribute only their real items across the available row width.
+- Added a shared control-button outline-thickness parameter, runtime setter, and non-breaking `SetButtonStyle` overload.
+- Added optional runtime OBJ download controls to the item popup, using the selected prefab or matching spawned instance and exposing material, texture, skinned-mesh, collider, vertex-limit, and texture-size settings.
+- Added WebGL browser download, iOS Files export, native persistent-file fallback, success/failure events, and build-only export coverage through the FP Utility runtime exporter.
 
 ### Changed
 

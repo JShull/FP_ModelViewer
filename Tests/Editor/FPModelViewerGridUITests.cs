@@ -2,6 +2,8 @@ namespace FuzzPhyte.ModelViewer.Tests
 {
     using System.Collections.Generic;
     using FuzzPhyte.Placement.OrbitalCamera;
+    using FuzzPhyte.Utility;
+    using FuzzPhyte.Utility.Meta;
     using NUnit.Framework;
     using UnityEditor;
     using UnityEngine;
@@ -39,6 +41,56 @@ namespace FuzzPhyte.ModelViewer.Tests
                 Assert.That(grid.PanelCount, Is.EqualTo(6));
                 Assert.That(grid.GeneratedPanelCount, Is.EqualTo(6));
                 Assert.That(panels.Count, Is.EqualTo(6));
+            }
+            finally
+            {
+                for (int i = 0; i < items.Count; i++)
+                {
+                    Object.DestroyImmediate(items[i]);
+                }
+                Object.DestroyImmediate(catalog);
+                Object.DestroyImmediate(gameObject);
+            }
+        }
+
+        [Test]
+        public void Build_OneByFourWithSixItems_DoesNotGenerateEmptyCells()
+        {
+            var gameObject = new GameObject("Model Viewer Partial Panel Test");
+            gameObject.SetActive(false);
+            var catalog = ScriptableObject.CreateInstance<FP_ModelViewerCatalogData>();
+            var items = new List<FP_ModelViewerItemData>();
+            var host = new VisualElement();
+
+            try
+            {
+                for (int i = 0; i < 6; i++)
+                {
+                    items.Add(ScriptableObject.CreateInstance<FP_ModelViewerItemData>());
+                }
+                SetCatalogItems(catalog, items);
+
+                FP_ModelViewerGridUI grid = gameObject.AddComponent<FP_ModelViewerGridUI>();
+                grid.SetCatalog(catalog);
+                grid.SetGridDimensions(1, 4);
+                grid.Build(host);
+
+                List<VisualElement> panels = host
+                    .Query<VisualElement>(className: FP_ModelViewerGridUI.PanelClass)
+                    .ToList();
+                List<Button> finalPanelItems = panels[1]
+                    .Query<Button>(className: FP_ModelViewerGridUI.ItemClass)
+                    .ToList();
+                List<VisualElement> emptyCells = host
+                    .Query<VisualElement>(className: FP_ModelViewerGridUI.EmptyCellClass)
+                    .ToList();
+
+                Assert.That(panels.Count, Is.EqualTo(2));
+                Assert.That(finalPanelItems.Count, Is.EqualTo(2));
+                Assert.That(emptyCells, Is.Empty);
+                Assert.That(finalPanelItems[0].style.flexGrow.value, Is.EqualTo(1f));
+                Assert.That(finalPanelItems[0].style.flexBasis.value.value, Is.EqualTo(0f));
+                Assert.That(finalPanelItems[1].style.flexBasis.value.value, Is.EqualTo(0f));
             }
             finally
             {
@@ -433,6 +485,369 @@ namespace FuzzPhyte.ModelViewer.Tests
             }
         }
 
+        [Test]
+        public void TagFilters_DeduplicateCatalogTagsAndRequireJoinedMatchingImmediately()
+        {
+            var gameObject = new GameObject("Model Viewer Tag Filter Test");
+            gameObject.SetActive(false);
+            var catalog = ScriptableObject.CreateInstance<FP_ModelViewerCatalogData>();
+            var firstItem = ScriptableObject.CreateInstance<FP_ModelViewerItemData>();
+            var secondItem = ScriptableObject.CreateInstance<FP_ModelViewerItemData>();
+            var thirdItem = ScriptableObject.CreateInstance<FP_ModelViewerItemData>();
+            var furniture = ScriptableObject.CreateInstance<FP_Tag>();
+            var table = ScriptableObject.CreateInstance<FP_Tag>();
+            var host = new VisualElement();
+
+            try
+            {
+                furniture.TagName = "Furniture";
+                table.TagName = "Table";
+                SetTags(firstItem, furniture);
+                SetTags(secondItem, furniture, table);
+                SetTags(thirdItem, table);
+                SetCatalogItems(catalog, new[] { firstItem, secondItem, thirdItem });
+
+                FP_ModelViewerGridUI grid = gameObject.AddComponent<FP_ModelViewerGridUI>();
+                grid.SetCatalog(catalog);
+                grid.Build(host);
+
+                Assert.That(grid.CatalogTags.Count, Is.EqualTo(2));
+                Assert.That(grid.VisibleItemCount, Is.EqualTo(3));
+
+                grid.ShowTagFilterPanel();
+                Toggle furnitureRadio = host
+                    .Query<Toggle>(className: FP_ModelViewerGridUI.TagFilterRadioClass)
+                    .ToList()
+                    .Find(toggle => object.ReferenceEquals(toggle.userData, furniture));
+                Assert.That(furnitureRadio, Is.Not.Null);
+                furnitureRadio.value = true;
+
+                Assert.That(grid.VisibleItemCount, Is.EqualTo(2));
+                Assert.That(grid.ActiveTagFilters, Is.EquivalentTo(new[] { furniture }));
+                Assert.That(
+                    host.Query<Button>(className: FP_ModelViewerGridUI.ItemClass).ToList().Count,
+                    Is.EqualTo(2));
+
+                Assert.That(grid.ToggleTagFilter(table), Is.True);
+                Assert.That(grid.VisibleItemCount, Is.EqualTo(1));
+                Assert.That(grid.ActiveTagFilters.Count, Is.EqualTo(2));
+                Assert.That(
+                    host.Query<Button>(className: FP_ModelViewerGridUI.ItemClass).ToList().Count,
+                    Is.EqualTo(1));
+                Assert.That(
+                    host.Query<VisualElement>(className: FP_ModelViewerGridUI.EmptyCellClass)
+                        .ToList(),
+                    Is.Empty);
+
+                Assert.That(grid.ClearTagFilters(), Is.True);
+                Assert.That(grid.ActiveTagFilters, Is.Empty);
+                Assert.That(grid.VisibleItemCount, Is.EqualTo(3));
+            }
+            finally
+            {
+                Object.DestroyImmediate(furniture);
+                Object.DestroyImmediate(table);
+                Object.DestroyImmediate(firstItem);
+                Object.DestroyImmediate(secondItem);
+                Object.DestroyImmediate(thirdItem);
+                Object.DestroyImmediate(catalog);
+                Object.DestroyImmediate(gameObject);
+            }
+        }
+
+        [Test]
+        public void TagFilterPanel_IsScrollableAndUsesConfiguredColumnsAndTruncation()
+        {
+            var gameObject = new GameObject("Model Viewer Tag Drawer Test");
+            gameObject.SetActive(false);
+            var catalog = ScriptableObject.CreateInstance<FP_ModelViewerCatalogData>();
+            var item = ScriptableObject.CreateInstance<FP_ModelViewerItemData>();
+            var tags = new List<FP_Tag>();
+            var host = new VisualElement();
+
+            try
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    var tag = ScriptableObject.CreateInstance<FP_Tag>();
+                    tag.TagName = i == 0 ? "VeryLongFurnitureTag" : $"Tag {i + 1}";
+                    tags.Add(tag);
+                }
+                SetTags(item, tags.ToArray());
+                SetCatalogItems(catalog, new[] { item });
+
+                FP_ModelViewerGridUI grid = gameObject.AddComponent<FP_ModelViewerGridUI>();
+                grid.SetCatalog(catalog);
+                grid.SetTagFilterLayout(2, 8);
+                grid.Build(host);
+
+                Assert.That(grid.ShowTagFilterPanel(), Is.True);
+                VisualElement panel = host.Q<VisualElement>(
+                    className: FP_ModelViewerGridUI.TagFilterPanelClass);
+                ScrollView scroll = host.Q<ScrollView>(
+                    className: FP_ModelViewerGridUI.TagFilterScrollClass);
+                List<VisualElement> rows = host
+                    .Query<VisualElement>(className: FP_ModelViewerGridUI.TagFilterRowClass)
+                    .ToList();
+                List<Toggle> radios = host
+                    .Query<Toggle>(className: FP_ModelViewerGridUI.TagFilterRadioClass)
+                    .ToList();
+
+                Assert.That(panel.style.display.value, Is.EqualTo(DisplayStyle.Flex));
+                Assert.That(scroll, Is.Not.Null);
+                Assert.That(
+                    scroll.horizontalScrollerVisibility,
+                    Is.EqualTo(ScrollerVisibility.Hidden));
+                Assert.That(
+                    scroll.verticalScrollerVisibility,
+                    Is.EqualTo(ScrollerVisibility.Auto));
+                Assert.That(rows.Count, Is.EqualTo(2));
+                Assert.That(radios.Count, Is.EqualTo(4));
+                Assert.That(radios[0].text, Is.EqualTo("VeryL..."));
+                Assert.That(radios[0].tooltip, Is.EqualTo("VeryLongFurnitureTag"));
+                Assert.That(radios[0].value, Is.False);
+                Assert.That(radios[0].style.width.keyword, Is.EqualTo(StyleKeyword.Null));
+                Assert.That(radios[0].style.flexGrow.value, Is.EqualTo(1f));
+                Assert.That(radios[0].style.flexBasis.value.value, Is.EqualTo(0f));
+                Assert.That(radios[0].style.minWidth.value.value, Is.EqualTo(0f));
+                VisualElement radioInput = radios[0].Q<VisualElement>(
+                    className: "unity-toggle__input");
+                Assert.That(radioInput, Is.Not.Null);
+                Assert.That(radioInput.style.width.keyword, Is.EqualTo(StyleKeyword.Null));
+                VisualElement radioCheckmark = radios[0].Q<VisualElement>(
+                    className: "unity-toggle__checkmark");
+                Assert.That(radioCheckmark, Is.Not.Null);
+                Assert.That(radioCheckmark.style.width.value.value, Is.EqualTo(16f));
+                Assert.That(radioCheckmark.style.height.value.value, Is.EqualTo(16f));
+                Assert.That(
+                    radioCheckmark.style.borderTopLeftRadius.value.value,
+                    Is.EqualTo(999f));
+                VisualElement radioDot = radios[0].Q<VisualElement>(
+                    className: FP_ModelViewerGridUI.TagFilterRadioDotClass);
+                Assert.That(radioDot, Is.Not.Null);
+                Assert.That(radioDot.style.width.value.value, Is.EqualTo(8f));
+                Assert.That(radioDot.style.height.value.value, Is.EqualTo(8f));
+                Assert.That(radioDot.style.display.value, Is.EqualTo(DisplayStyle.None));
+                Assert.That(grid.HideTagFilterPanel(), Is.True);
+                Assert.That(panel.style.display.value, Is.EqualTo(DisplayStyle.None));
+            }
+            finally
+            {
+                for (int i = 0; i < tags.Count; i++)
+                {
+                    Object.DestroyImmediate(tags[i]);
+                }
+                Object.DestroyImmediate(item);
+                Object.DestroyImmediate(catalog);
+                Object.DestroyImmediate(gameObject);
+            }
+        }
+
+        [Test]
+        public void Branding_UsesTitleOverrideAndHostLevelLogoPlacement()
+        {
+            var gameObject = new GameObject("Model Viewer Branding Test");
+            gameObject.SetActive(false);
+            var catalog = ScriptableObject.CreateInstance<FP_ModelViewerCatalogData>();
+            var texture = new Texture2D(32, 16);
+            Sprite sprite = Sprite.Create(
+                texture,
+                new Rect(0f, 0f, texture.width, texture.height),
+                new Vector2(0.5f, 0.5f));
+            var host = new VisualElement();
+
+            try
+            {
+                FP_ModelViewerGridUI grid = gameObject.AddComponent<FP_ModelViewerGridUI>();
+                grid.SetCatalog(catalog);
+                grid.SetCatalogTitle("Custom Catalog");
+                grid.SetLogo(
+                    sprite,
+                    FP_ModelViewerLogoPlacement.TopLeft,
+                    new Vector2(96f, 48f),
+                    new Vector2(12f, 8f));
+                grid.Build(host);
+
+                Label title = host.Q<Label>(className: FP_ModelViewerGridUI.HeaderClass);
+                VisualElement logoContainer = host.Q<VisualElement>(
+                    className: FP_ModelViewerGridUI.LogoContainerClass);
+                Image logo = host.Q<Image>(className: FP_ModelViewerGridUI.LogoImageClass);
+
+                Assert.That(title, Is.Not.Null);
+                Assert.That(title.text, Is.EqualTo("Custom Catalog"));
+                Assert.That(logoContainer, Is.Not.Null);
+                Assert.That(logo, Is.Not.Null);
+                Assert.That(logo.sprite, Is.SameAs(sprite));
+                Assert.That(
+                    logoContainer.style.justifyContent.value,
+                    Is.EqualTo(Justify.FlexStart));
+                Assert.That(logoContainer.style.top.value.value, Is.EqualTo(8f));
+                Assert.That(logo.style.width.value.value, Is.EqualTo(96f));
+                Assert.That(logo.style.height.value.value, Is.EqualTo(48f));
+                Assert.That(logo.style.marginLeft.value.value, Is.EqualTo(12f));
+
+                grid.SetCatalogTitle("Updated Catalog");
+                Assert.That(title.text, Is.EqualTo("Updated Catalog"));
+
+                grid.SetLogo(
+                    sprite,
+                    FP_ModelViewerLogoPlacement.TopCenter,
+                    new Vector2(64f, 32f),
+                    new Vector2(4f, 10f));
+                logoContainer = host.Q<VisualElement>(
+                    className: FP_ModelViewerGridUI.LogoContainerClass);
+                logo = host.Q<Image>(className: FP_ModelViewerGridUI.LogoImageClass);
+                Assert.That(
+                    logoContainer.style.justifyContent.value,
+                    Is.EqualTo(Justify.Center));
+                Assert.That(logo.style.left.value.value, Is.EqualTo(4f));
+
+                grid.ClearLogo();
+                Assert.That(
+                    host.Q<VisualElement>(className: FP_ModelViewerGridUI.LogoContainerClass),
+                    Is.Null);
+            }
+            finally
+            {
+                Object.DestroyImmediate(sprite);
+                Object.DestroyImmediate(texture);
+                Object.DestroyImmediate(catalog);
+                Object.DestroyImmediate(gameObject);
+            }
+        }
+
+        [Test]
+        public void GeneratedControlButtons_UseSharedCornerRadius()
+        {
+            var gameObject = new GameObject("Model Viewer Button Radius Test");
+            gameObject.SetActive(false);
+            var catalog = ScriptableObject.CreateInstance<FP_ModelViewerCatalogData>();
+            var item = ScriptableObject.CreateInstance<FP_ModelViewerItemData>();
+            var tag = ScriptableObject.CreateInstance<FP_Tag>();
+            var host = new VisualElement();
+            var textColor = new Color(0.9f, 0.8f, 0.7f, 1f);
+            var backgroundColor = new Color(0.2f, 0.25f, 0.3f, 1f);
+            var hoverColor = new Color(0.35f, 0.4f, 0.45f, 1f);
+            var selectedColor = new Color(0.1f, 0.5f, 0.8f, 1f);
+
+            try
+            {
+                tag.TagName = "Furniture";
+                SetTags(item, tag);
+                SetCatalogItems(catalog, new[] { item });
+                FP_ModelViewerGridUI grid = gameObject.AddComponent<FP_ModelViewerGridUI>();
+                grid.SetCatalog(catalog);
+                grid.SetButtonStyle(
+                    textColor,
+                    backgroundColor,
+                    hoverColor,
+                    selectedColor,
+                    14f,
+                    2.5f);
+                grid.Build(host);
+                grid.ShowTagFilterPanel();
+                grid.SelectItem(item);
+
+                List<Button> buttons = host.Query<Button>().ToList();
+                Assert.That(buttons.Count, Is.GreaterThan(0));
+                for (int i = 0; i < buttons.Count; i++)
+                {
+                    if (buttons[i].ClassListContains(FP_ModelViewerGridUI.ItemClass))
+                    {
+                        continue;
+                    }
+
+                    Assert.That(
+                        buttons[i].style.borderTopLeftRadius.value.value,
+                        Is.EqualTo(14f));
+                    Assert.That(
+                        buttons[i].style.borderBottomRightRadius.value.value,
+                        Is.EqualTo(14f));
+                    Assert.That(buttons[i].style.color.value, Is.EqualTo(textColor));
+                    Assert.That(
+                        buttons[i].style.backgroundColor.value,
+                        Is.EqualTo(backgroundColor));
+                    Assert.That(buttons[i].style.borderTopWidth.value, Is.EqualTo(2.5f));
+                    Assert.That(buttons[i].style.borderRightWidth.value, Is.EqualTo(2.5f));
+                    Assert.That(buttons[i].style.borderBottomWidth.value, Is.EqualTo(2.5f));
+                    Assert.That(buttons[i].style.borderLeftWidth.value, Is.EqualTo(2.5f));
+                }
+
+                Assert.That(grid.ButtonOutlineThickness, Is.EqualTo(2.5f));
+
+                Toggle radio = host.Q<Toggle>(
+                    className: FP_ModelViewerGridUI.TagFilterRadioClass);
+                Assert.That(radio, Is.Not.Null);
+                Assert.That(radio.style.borderTopLeftRadius.value.value, Is.EqualTo(14f));
+
+                Button filterButton = host.Q<Button>(
+                    className: FP_ModelViewerGridUI.TagFilterToggleClass);
+                using (PointerEnterEvent hoverEvent = PointerEnterEvent.GetPooled())
+                {
+                    filterButton.SendEvent(hoverEvent);
+                }
+                Assert.That(filterButton.style.backgroundColor.value, Is.EqualTo(hoverColor));
+
+                using (PointerDownEvent selectedEvent = PointerDownEvent.GetPooled())
+                {
+                    filterButton.SendEvent(selectedEvent);
+                }
+                Assert.That(
+                    filterButton.style.backgroundColor.value,
+                    Is.EqualTo(selectedColor));
+            }
+            finally
+            {
+                Object.DestroyImmediate(tag);
+                Object.DestroyImmediate(item);
+                Object.DestroyImmediate(catalog);
+                Object.DestroyImmediate(gameObject);
+            }
+        }
+
+        [Test]
+        public void SelectedItemObjPackage_UsesIncludedPrefabMeshHierarchy()
+        {
+            var viewerObject = new GameObject("Model Viewer OBJ Test");
+            viewerObject.SetActive(false);
+            var item = ScriptableObject.CreateInstance<FP_ModelViewerItemData>();
+            var template = new GameObject("Export Template");
+            var mesh = new Mesh { name = "Export Triangle" };
+            mesh.vertices = new[]
+            {
+                Vector3.zero,
+                Vector3.right,
+                Vector3.up
+            };
+            mesh.triangles = new[] { 0, 1, 2 };
+            template.AddComponent<MeshFilter>().sharedMesh = mesh;
+
+            try
+            {
+                SetIncludedPrefab(item, template);
+                FP_ModelViewerGridUI grid =
+                    viewerObject.AddComponent<FP_ModelViewerGridUI>();
+                grid.SelectItem(item);
+
+                bool success = grid.TryBuildSelectedItemObjPackage(
+                    out FPMeshRuntimeObjExportResult result,
+                    out string message);
+
+                Assert.That(success, Is.True, message);
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.ExportedMeshCount, Is.EqualTo(1));
+                Assert.That(result.VertexCount, Is.EqualTo(3));
+                Assert.That(result.Data.Length, Is.GreaterThan(0));
+            }
+            finally
+            {
+                Object.DestroyImmediate(mesh);
+                Object.DestroyImmediate(template);
+                Object.DestroyImmediate(item);
+                Object.DestroyImmediate(viewerObject);
+            }
+        }
+
         private static void SetCatalogItems(
             FP_ModelViewerCatalogData catalog,
             IReadOnlyList<FP_ModelViewerItemData> items)
@@ -453,6 +868,20 @@ namespace FuzzPhyte.ModelViewer.Tests
         {
             var serializedItem = new SerializedObject(item);
             serializedItem.FindProperty("_includedPrefab").objectReferenceValue = includedPrefab;
+            serializedItem.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        private static void SetTags(
+            FP_ModelViewerItemData item,
+            params FP_Tag[] tags)
+        {
+            var serializedItem = new SerializedObject(item);
+            SerializedProperty serializedTags = serializedItem.FindProperty("_tags");
+            serializedTags.arraySize = tags.Length;
+            for (int i = 0; i < tags.Length; i++)
+            {
+                serializedTags.GetArrayElementAtIndex(i).objectReferenceValue = tags[i];
+            }
             serializedItem.ApplyModifiedPropertiesWithoutUndo();
         }
     }
