@@ -133,6 +133,8 @@ GameObject:
   - component: {fileID: 49797846}
   - component: {fileID: 49797845}
   - component: {fileID: 49797850}
+  - component: {fileID: 49797851}
+  - component: {fileID: 49797852}
   m_Layer: 0
   m_Name: OrbitalSystem
   m_TagString: Untagged
@@ -330,6 +332,100 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &49797851
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 49797844}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f809b74783fe1f42a0ce493e35cae01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: com.fuzzphyte.placement::FuzzPhyte.Placement.Interaction.FP_PlacementInteractionBehaviour
+  _state: 1
+  _pointerPosition: {fileID: -8371724429896835364, guid: eefd7086dd870df448a15e26089fbced, type: 3}
+  _primaryClick: {fileID: -3032351691284631427, guid: eefd7086dd870df448a15e26089fbced, type: 3}
+  targetCamera: {fileID: 1795236355}
+  placementMask:
+    serializedVersion: 2
+    m_Bits: 1
+  _requireRegion: 1
+  _inputRegion: {fileID: 11400000, guid: e1bfae00a44b96141a32e62e20575451, type: 2}
+  _requireApplicationFocus: 1
+  _isDown: 0
+  _inputLocked: 0
+  doubleClickThreshold: 0.25
+  dragStartThresholdPixels: 5
+  _pressStartPos: {x: 0, y: 0}
+  _useDistanceBasedClick: 1
+  _endPressPos: {x: 0, y: 0}
+  dragSuppressTime: 0.05
+  _dragEligible: 0
+  drawDebug: 1
+  maxRayDistance: 40
+  _activePlacement: {fileID: 0}
+  _activeComponent: {fileID: 0}
+  _clickedComponent: {fileID: 0}
+  _activeSocket: {fileID: 0}
+  _startPos: {x: 0, y: 0, z: 0}
+  _startRot: {x: 0, y: 0, z: 0, w: 0}
+  surfaceMask:
+    serializedVersion: 2
+    m_Bits: 0
+  surfaceCastDistance: 10
+  lowestGroundPointRef: {fileID: 52611951}
+  _currentSurface: {fileID: 0}
+  surfaceCastVertialOffsetScalar: 1.25
+  _dragRayDistance: 0
+  _dragLocalOffset: {x: 0, y: 0, z: 0}
+  _dragTarget: {fileID: 0}
+  _hoverSocket: {fileID: 0}
+  _previousHoverSocket: {fileID: 0}
+  newHover: {fileID: 0}
+  useSocketMagnet: 1
+  magnetRange: 2
+  magnetStrength: 4000
+  magnetSnapDistance: 0.15
+  enforceBounds: 1
+  boundsCenter: {x: 0, y: 1, z: 0}
+  boundsSize: {x: 5, y: 5, z: 5}
+  fpDrawer: {fileID: 49797852}
+  useCursorSurfaceAssist: 1
+  perspectiveSurface:
+    serializedVersion: 2
+    m_Bits: 0
+  cursorAssistMaxDistance: 50
+  UseDoubleClickAuthoritative: 1
+  doubleClickEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  singleClickEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  dragEndSocketSuccessEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  dragEndSocketFailedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  dragEndMovedLocationEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  GenericPlacementData: {fileID: 11400000, guid: d9cc35c4e9ce53b4899dc9fc838fe80b, type: 2}
+--- !u!114 &49797852
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 49797844}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c89c7b184b30d4a0ba2c73c787c36c02, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: com.fuzzphyte.utility::FuzzPhyte.Utility.FP_UtilityDraw
 --- !u!1 &52611949
 GameObject:
   m_ObjectHideFlags: 0
@@ -959,6 +1055,19 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+      - m_Target: {fileID: 49797851}
+        m_TargetAssemblyTypeName: FuzzPhyte.Placement.Interaction.FP_PlacementInteractionBehaviour,
+          com.fuzzphyte.placement
+        m_MethodName: InputLocked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
   _onPageChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -972,6 +1081,19 @@ MonoBehaviour:
         m_TargetAssemblyTypeName: FuzzPhyte.Placement.OrbitalCamera.FP_ModelCycleController,
           com.fuzzphyte.placement
         m_MethodName: SetSingleModel
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 49797851}
+        m_TargetAssemblyTypeName: FuzzPhyte.Placement.Interaction.FP_PlacementInteractionBehaviour,
+          com.fuzzphyte.placement
+        m_MethodName: AddGenericPlacementData
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -997,9 +1119,35 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 49797851}
+        m_TargetAssemblyTypeName: FuzzPhyte.Placement.Interaction.FP_PlacementInteractionBehaviour,
+          com.fuzzphyte.placement
+        m_MethodName: InputUnlocked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   _onSpawnedItemRemoved:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 49797851}
+        m_TargetAssemblyTypeName: FuzzPhyte.Placement.Interaction.FP_PlacementInteractionBehaviour,
+          com.fuzzphyte.placement
+        m_MethodName: RemoveGenericPlacementData
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   _onCatalogVisibilityChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -1019,6 +1167,19 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 49797851}
+        m_TargetAssemblyTypeName: FuzzPhyte.Placement.Interaction.FP_PlacementInteractionBehaviour,
+          com.fuzzphyte.placement
+        m_MethodName: UpdateInputRegion
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   _onCatalogVisible:
     m_PersistentCalls:
       m_Calls:
@@ -1026,6 +1187,19 @@ MonoBehaviour:
         m_TargetAssemblyTypeName: FuzzPhyte.Placement.OrbitalCamera.FP_OrbitalMouseInputBehaviour,
           com.fuzzphyte.placement
         m_MethodName: ReplaceScreenRegion
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 49797851}
+        m_TargetAssemblyTypeName: FuzzPhyte.Placement.Interaction.FP_PlacementInteractionBehaviour,
+          com.fuzzphyte.placement
+        m_MethodName: UpdateInputRegion
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
