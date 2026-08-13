@@ -906,6 +906,12 @@ namespace FuzzPhyte.ModelViewer
                 return false;
             }
 
+            if (string.IsNullOrWhiteSpace(deliveredLocation))
+            {
+                Debug.Log($"[FP Model Viewer] {deliveryMessage}", this);
+                return false;
+            }
+
             Debug.Log($"[FP Model Viewer] {deliveryMessage}", this);
             _onObjExported.Invoke(deliveredLocation);
             ObjExported?.Invoke(deliveredLocation);

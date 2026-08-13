@@ -47,6 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added WebGL browser download, iOS Files export, native persistent-file fallback, success/failure events, and build-only export coverage through the FP Utility runtime exporter.
 - Added automatic ModelImporter Read/Write preparation for every MeshFilter, SkinnedMeshRenderer, and MeshCollider referenced by catalog item prefabs, covering builder generation and direct catalog Inspector edits.
 - Made the inherited Document Style Sheet optional for `FP_ModelViewerGridUI` and automatically attach an assigned stylesheet to the UIDocument root, avoiding FP_UI's mismatched-stylesheet error for generated inline layouts.
+- Changed desktop OBJ delivery to use Save File prompts in the Unity Editor and Windows standalone players, with cancellation returning quietly to the viewer.
 
 ### Changed
 
