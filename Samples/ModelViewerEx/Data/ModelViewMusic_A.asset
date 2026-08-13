@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb275d86969ebbd45899b7f70650dd7e, type: 3}
+  m_Name: ModelViewMusic_A
+  m_EditorClassIdentifier: com.fuzzphyte.utility::FuzzPhyte.Utility.Audio.FP_MusicTrack
+  UniqueID: 
+  Name: 
+  Description: Background music for Model View
+  Clip: {fileID: 8300000, guid: f27a8a66e12a3ee489d4eab3fa52badf, type: 3}
+  MusicEmotionalState: 0
