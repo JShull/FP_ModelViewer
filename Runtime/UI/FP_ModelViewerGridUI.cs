@@ -310,6 +310,27 @@ namespace FuzzPhyte.ModelViewer
             ResolveHostAndBuild();
         }
 
+        /// <summary>
+        /// Model Viewer has a complete inline layout and does not require a USS asset.
+        /// When a caller supplies one, attach it to the UIDocument root automatically.
+        /// </summary>
+        protected override void SetupUIElements()
+        {
+            if (Document == null)
+            {
+                RootContainer = null;
+                Debug.LogError("FP Model Viewer requires a UIDocument reference.", this);
+                return;
+            }
+
+            RootContainer = Document.rootVisualElement;
+            if (DocumentStyleSheet != null &&
+                !RootContainer.styleSheets.Contains(DocumentStyleSheet))
+            {
+                RootContainer.styleSheets.Add(DocumentStyleSheet);
+            }
+        }
+
         private void OnEnable()
         {
             if (_hasAwakened && _generatedRoot == null)

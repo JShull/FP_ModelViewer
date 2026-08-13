@@ -1,5 +1,6 @@
 namespace FuzzPhyte.ModelViewer.Tests
 {
+    using System.IO;
     using NUnit.Framework;
     using FuzzPhyte.ModelViewer.Editor;
     using FuzzPhyte.Placement.OrbitalCamera;
@@ -267,6 +268,59 @@ namespace FuzzPhyte.ModelViewer.Tests
             Assert.That(catalog.Items[0], Is.SameAs(second));
             Assert.That(catalog.Items[1], Is.SameAs(first));
             Assert.That(catalog.DisplayName, Is.EqualTo("Test Catalog"));
+        }
+
+        [Test]
+        public void SetCatalogItems_EnablesReadWriteOnIncludedImportedModel()
+        {
+            FP_ModelViewerAssetUtility.EnsureAssetFolder(TestRoot);
+            string modelPath = $"{TestRoot}/CatalogReadableMesh.obj";
+            string absoluteModelPath = Path.Combine(
+                Application.dataPath,
+                modelPath.Substring("Assets/".Length));
+            File.WriteAllText(
+                absoluteModelPath,
+                "o CatalogReadableMesh\n" +
+                "v 0 0 0\n" +
+                "v 1 0 0\n" +
+                "v 0 1 0\n" +
+                "f 1 2 3\n");
+            AssetDatabase.ImportAsset(
+                modelPath,
+                ImportAssetOptions.ForceSynchronousImport |
+                ImportAssetOptions.ForceUpdate);
+
+            ModelImporter importer = AssetImporter.GetAtPath(modelPath) as ModelImporter;
+            Assert.That(importer, Is.Not.Null);
+            importer.isReadable = false;
+            importer.SaveAndReimport();
+
+            GameObject importedModel = AssetDatabase.LoadAssetAtPath<GameObject>(modelPath);
+            FP_ModelViewerItemData item = FP_ModelViewerAssetUtility.CreateOrLoadItem(
+                $"{TestRoot}/ReadableItem.asset");
+            FP_ModelViewerCatalogData catalog =
+                FP_ModelViewerAssetUtility.CreateOrLoadCatalog(
+                    $"{TestRoot}/ReadableCatalog.asset");
+            FP_ModelViewerAssetUtility.ConfigureItem(
+                item,
+                "Readable Model",
+                null,
+                importedModel);
+
+            FP_ModelViewerAssetUtility.SetCatalogItems(
+                catalog,
+                new[] { item },
+                "Readable Catalog");
+
+            ModelImporter updatedImporter =
+                AssetImporter.GetAtPath(modelPath) as ModelImporter;
+            GameObject updatedModel = AssetDatabase.LoadAssetAtPath<GameObject>(modelPath);
+            MeshFilter meshFilter = updatedModel.GetComponentInChildren<MeshFilter>(true);
+            Assert.That(updatedImporter, Is.Not.Null);
+            Assert.That(updatedImporter.isReadable, Is.True);
+            Assert.That(meshFilter, Is.Not.Null);
+            Assert.That(meshFilter.sharedMesh.isReadable, Is.True);
+            Assert.That(catalog.Items[0], Is.SameAs(item));
         }
 
         private static void AssertVector3(Vector3 expected, Vector3 actual)

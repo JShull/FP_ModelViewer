@@ -848,6 +848,37 @@ namespace FuzzPhyte.ModelViewer.Tests
             }
         }
 
+        [Test]
+        public void Awake_AssignedStyleSheet_AttachesItToDocumentRoot()
+        {
+            var gameObject = new GameObject("Model Viewer Style Sheet Test");
+            gameObject.SetActive(false);
+            var styleSheet = ScriptableObject.CreateInstance<StyleSheet>();
+
+            try
+            {
+                UIDocument document = gameObject.AddComponent<UIDocument>();
+                FP_ModelViewerGridUI grid =
+                    gameObject.AddComponent<FP_ModelViewerGridUI>();
+                grid.Document = document;
+                grid.DocumentStyleSheet = styleSheet;
+
+                grid.Awake();
+
+                Assert.That(
+                    document.rootVisualElement.styleSheets.Contains(styleSheet),
+                    Is.True);
+                Assert.That(
+                    document.rootVisualElement.Q<VisualElement>("FPModelViewerGrid"),
+                    Is.Not.Null);
+            }
+            finally
+            {
+                Object.DestroyImmediate(styleSheet);
+                Object.DestroyImmediate(gameObject);
+            }
+        }
+
         private static void SetCatalogItems(
             FP_ModelViewerCatalogData catalog,
             IReadOnlyList<FP_ModelViewerItemData> items)

@@ -254,15 +254,16 @@ MonoBehaviour:
   _tagFilterPanelHeightPercent: 65
   _tagFilterPanelColor: {r: 0.12, g: 0.12, b: 0.12, a: 0.98}
   _tagFilterButtonColor: {r: 0.25, g: 0.25, b: 0.25, a: 1}
-  _selectedTagFilterColor: {r: 0.12, g: 0.45, b: 0.78, a: 1}
+  _selectedTagFilterColor: {r: 0.93725497, g: 0.40000004, b: 0.14901961, a: 1}
   _itemCellColor: {r: 0, g: 0, b: 0, a: 1}
   _itemTextColor: {r: 1, g: 1, b: 1, a: 1}
   _itemCornerRadius: 15
   _buttonCornerRadius: 15
+  _buttonOutlineThickness: 2
   _buttonTextColor: {r: 1, g: 1, b: 1, a: 1}
   _buttonBackgroundColor: {r: 0.12156863, g: 0.1254902, b: 0.12941177, a: 1}
   _buttonHoverColor: {r: 0.3962264, g: 0.3962264, b: 0.3962264, a: 1}
-  _buttonSelectedColor: {r: 0.12, g: 0.45, b: 0.78, a: 1}
+  _buttonSelectedColor: {r: 0.93725497, g: 0.40000004, b: 0.14901961, a: 1}
   _topInsetPercent: 65
   _rightInsetPercent: 5
   _bottomInsetPercent: 0
@@ -277,6 +278,15 @@ MonoBehaviour:
   _spawnTarget: {fileID: 1200611688}
   _parentSpawnedItemToTarget: 1
   _closePopupAfterSpawn: 1
+  _showObjExportButton: 1
+  _objExportButtonLabel: Download OBJ
+  _objExportMaterials: 1
+  _objExportTextures: 1
+  _objExportIncludeInactive: 1
+  _objExportIncludeSkinnedMeshes: 1
+  _objExportIncludeMeshColliders: 0
+  _objExportMaximumVertexCount: 500000
+  _objExportMaximumTextureSize: 4096
   _onItemSelected:
     m_PersistentCalls:
       m_Calls: []
@@ -299,6 +309,12 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   _onTagFiltersChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  _onObjExported:
+    m_PersistentCalls:
+      m_Calls: []
+  _onObjExportFailed:
     m_PersistentCalls:
       m_Calls: []
 --- !u!4 &793804043

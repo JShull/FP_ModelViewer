@@ -45,6 +45,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added a shared control-button outline-thickness parameter, runtime setter, and non-breaking `SetButtonStyle` overload.
 - Added optional runtime OBJ download controls to the item popup, using the selected prefab or matching spawned instance and exposing material, texture, skinned-mesh, collider, vertex-limit, and texture-size settings.
 - Added WebGL browser download, iOS Files export, native persistent-file fallback, success/failure events, and build-only export coverage through the FP Utility runtime exporter.
+- Added automatic ModelImporter Read/Write preparation for every MeshFilter, SkinnedMeshRenderer, and MeshCollider referenced by catalog item prefabs, covering builder generation and direct catalog Inspector edits.
+- Made the inherited Document Style Sheet optional for `FP_ModelViewerGridUI` and automatically attach an assigned stylesheet to the UIDocument root, avoiding FP_UI's mismatched-stylesheet error for generated inline layouts.
 
 ### Changed
 

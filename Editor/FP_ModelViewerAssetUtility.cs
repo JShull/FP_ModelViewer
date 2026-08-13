@@ -344,6 +344,139 @@ namespace FuzzPhyte.ModelViewer.Editor
             EditorUtility.SetDirty(item);
         }
 
+        /// <summary>
+        /// Enables Read/Write on every imported model asset referenced by mesh components
+        /// beneath the supplied root. Meshes without a ModelImporter must already be readable.
+        /// </summary>
+        public static bool EnsureMeshReadWriteEnabled(
+            GameObject modelRoot,
+            out int updatedImporterCount,
+            out string resultMessage)
+        {
+            updatedImporterCount = 0;
+            if (modelRoot == null)
+            {
+                resultMessage = "Model root is missing.";
+                return false;
+            }
+
+            var meshes = new HashSet<Mesh>();
+            MeshFilter[] meshFilters = modelRoot.GetComponentsInChildren<MeshFilter>(true);
+            for (int i = 0; i < meshFilters.Length; i++)
+            {
+                if (meshFilters[i] != null && meshFilters[i].sharedMesh != null)
+                {
+                    meshes.Add(meshFilters[i].sharedMesh);
+                }
+            }
+
+            SkinnedMeshRenderer[] skinnedRenderers =
+                modelRoot.GetComponentsInChildren<SkinnedMeshRenderer>(true);
+            for (int i = 0; i < skinnedRenderers.Length; i++)
+            {
+                if (skinnedRenderers[i] != null && skinnedRenderers[i].sharedMesh != null)
+                {
+                    meshes.Add(skinnedRenderers[i].sharedMesh);
+                }
+            }
+
+            MeshCollider[] meshColliders = modelRoot.GetComponentsInChildren<MeshCollider>(true);
+            for (int i = 0; i < meshColliders.Length; i++)
+            {
+                if (meshColliders[i] != null && meshColliders[i].sharedMesh != null)
+                {
+                    meshes.Add(meshColliders[i].sharedMesh);
+                }
+            }
+
+            var modelAssetPaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var failures = new List<string>();
+            foreach (Mesh mesh in meshes)
+            {
+                string assetPath = AssetDatabase.GetAssetPath(mesh);
+                if (string.IsNullOrWhiteSpace(assetPath))
+                {
+                    if (!mesh.isReadable)
+                    {
+                        failures.Add(
+                            $"Mesh '{mesh.name}' is not readable and has no importer asset path.");
+                    }
+                    continue;
+                }
+
+                if (AssetImporter.GetAtPath(assetPath) is ModelImporter)
+                {
+                    modelAssetPaths.Add(assetPath);
+                }
+                else if (!mesh.isReadable)
+                {
+                    failures.Add(
+                        $"Mesh '{mesh.name}' at '{assetPath}' is not controlled by a ModelImporter.");
+                }
+            }
+
+            foreach (string assetPath in modelAssetPaths)
+            {
+                if (!(AssetImporter.GetAtPath(assetPath) is ModelImporter importer) ||
+                    importer.isReadable)
+                {
+                    continue;
+                }
+
+                try
+                {
+                    importer.isReadable = true;
+                    importer.SaveAndReimport();
+                    ModelImporter refreshedImporter =
+                        AssetImporter.GetAtPath(assetPath) as ModelImporter;
+                    if (refreshedImporter == null || !refreshedImporter.isReadable)
+                    {
+                        failures.Add($"Unity did not retain Read/Write for '{assetPath}'.");
+                        continue;
+                    }
+
+                    updatedImporterCount++;
+                }
+                catch (Exception exception)
+                {
+                    failures.Add(
+                        $"Could not enable Read/Write for '{assetPath}': {exception.Message}");
+                }
+            }
+
+            if (failures.Count > 0)
+            {
+                resultMessage = string.Join("\n", failures);
+                return false;
+            }
+
+            resultMessage = updatedImporterCount > 0
+                ? $"Enabled Read/Write on {updatedImporterCount} imported model asset(s)."
+                : $"All {meshes.Count} referenced mesh asset(s) are already runtime-readable.";
+            return true;
+        }
+
+        /// <summary>
+        /// Ensures every included prefab in a catalog exposes runtime-readable mesh data.
+        /// </summary>
+        public static bool EnsureCatalogMeshReadWriteEnabled(
+            FP_ModelViewerCatalogData catalog,
+            out int updatedImporterCount,
+            out string resultMessage)
+        {
+            if (catalog == null)
+            {
+                updatedImporterCount = 0;
+                resultMessage = "Catalog is missing.";
+                return false;
+            }
+
+            return EnsureItemMeshReadWriteEnabled(
+                catalog.Items,
+                out updatedImporterCount,
+                out resultMessage);
+        }
+
         public static void SetCatalogItems(
             FP_ModelViewerCatalogData catalog,
             IReadOnlyList<FP_ModelViewerItemData> items,
@@ -352,6 +485,19 @@ namespace FuzzPhyte.ModelViewer.Editor
             if (catalog == null)
             {
                 throw new ArgumentNullException(nameof(catalog));
+            }
+
+            if (!EnsureItemMeshReadWriteEnabled(
+                    items,
+                    out int updatedImporterCount,
+                    out string readWriteMessage))
+            {
+                throw new InvalidOperationException(
+                    $"Catalog mesh Read/Write preparation failed:\n{readWriteMessage}");
+            }
+            if (updatedImporterCount > 0)
+            {
+                Debug.Log($"[FP Model Viewer] {readWriteMessage}", catalog);
             }
 
             if (string.IsNullOrWhiteSpace(catalog.UniqueID))
@@ -372,6 +518,46 @@ namespace FuzzPhyte.ModelViewer.Editor
 
             serializedCatalog.ApplyModifiedPropertiesWithoutUndo();
             EditorUtility.SetDirty(catalog);
+        }
+
+        private static bool EnsureItemMeshReadWriteEnabled(
+            IReadOnlyList<FP_ModelViewerItemData> items,
+            out int updatedImporterCount,
+            out string resultMessage)
+        {
+            updatedImporterCount = 0;
+            var failures = new List<string>();
+            int count = items?.Count ?? 0;
+            for (int i = 0; i < count; i++)
+            {
+                FP_ModelViewerItemData item = items[i];
+                if (item == null || item.IncludedPrefab == null)
+                {
+                    continue;
+                }
+
+                if (EnsureMeshReadWriteEnabled(
+                    item.IncludedPrefab,
+                    out int itemUpdateCount,
+                    out string itemMessage))
+                {
+                    updatedImporterCount += itemUpdateCount;
+                    continue;
+                }
+
+                failures.Add($"{item.DisplayName}: {itemMessage}");
+            }
+
+            if (failures.Count > 0)
+            {
+                resultMessage = string.Join("\n", failures);
+                return false;
+            }
+
+            resultMessage = updatedImporterCount > 0
+                ? $"Enabled Read/Write on {updatedImporterCount} imported model asset(s)."
+                : "All catalog meshes are already runtime-readable.";
+            return true;
         }
 
         public static Texture2D SaveThumbnail(
