@@ -28,6 +28,11 @@ namespace FuzzPhyte.ModelViewer
     public sealed class FP_ModelViewerVisibilityUnityEvent : UnityEvent<bool>
     {
     }
+    [Serializable]
+    public sealed class FP_ModelViewerVisibilityUnityEventInputRegion : UnityEvent<FP_ScreenRegionAsset>
+    {
+
+    }
 
     [Serializable]
     public sealed class FP_ModelViewerFilterUnityEvent : UnityEvent<int>
@@ -100,6 +105,10 @@ namespace FuzzPhyte.ModelViewer
         [SerializeField] private FP_ModelViewerCatalogData _catalog;
         [SerializeField, Tooltip("Optional name of a VisualElement in the UIDocument that will host the generated grid.")]
         private string _hostElementName;
+        [SerializeField, Tooltip("When the Catalog is visible, this sets the screen region of the orbital system to interact with")]
+        private FP_ScreenRegionAsset _catalogVisibleOrbitScreenRegion;
+        [SerializeField, Tooltip("When the Catalog is hidden, this sets the screen region of the orbital system to interact with")]
+        private FP_ScreenRegionAsset _catalogHiddenOrbitScreenRegion;
 
         [Header("Grid Layout")]
         [SerializeField, Min(1)] private int _rows = 3;
@@ -208,6 +217,10 @@ namespace FuzzPhyte.ModelViewer
             new FP_ModelViewerSpawnedUnityEvent();
         [SerializeField] private FP_ModelViewerVisibilityUnityEvent _onCatalogVisibilityChanged =
             new FP_ModelViewerVisibilityUnityEvent();
+        [SerializeField] private FP_ModelViewerVisibilityUnityEventInputRegion _onCatalogHidden = 
+            new FP_ModelViewerVisibilityUnityEventInputRegion();
+        [SerializeField] private FP_ModelViewerVisibilityUnityEventInputRegion _onCatalogVisible =
+            new FP_ModelViewerVisibilityUnityEventInputRegion();
         [SerializeField] private FP_ModelViewerFilterUnityEvent _onTagFiltersChanged =
             new FP_ModelViewerFilterUnityEvent();
         [SerializeField] private FP_ModelViewerStringUnityEvent _onObjExported =
@@ -299,6 +312,10 @@ namespace FuzzPhyte.ModelViewer
         public UnityEvent OnPopupClosed => _onPopupClosed;
         public FP_ModelViewerVisibilityUnityEvent OnCatalogVisibilityChanged =>
             _onCatalogVisibilityChanged;
+        public FP_ModelViewerVisibilityUnityEventInputRegion OnCatalogVisibilityHidden =>
+            _onCatalogHidden;
+        public FP_ModelViewerVisibilityUnityEventInputRegion OnCatalogVisibiltyShown =>
+            _onCatalogVisible;
         public FP_ModelViewerFilterUnityEvent OnTagFiltersChanged => _onTagFiltersChanged;
         public FP_ModelViewerStringUnityEvent OnObjExported => _onObjExported;
         public FP_ModelViewerStringUnityEvent OnObjExportFailed => _onObjExportFailed;
@@ -1546,6 +1563,11 @@ namespace FuzzPhyte.ModelViewer
             if (!visible)
             {
                 RemovePopup(false);
+                _onCatalogHidden.Invoke(_catalogHiddenOrbitScreenRegion);
+            }
+            else 
+            {
+                _onCatalogVisible.Invoke(_catalogVisibleOrbitScreenRegion);
             }
             ApplyCatalogVisibility();
             _onCatalogVisibilityChanged.Invoke(_isCatalogVisible);

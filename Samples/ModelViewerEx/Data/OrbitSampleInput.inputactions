@@ -1,0 +1,101 @@
+{
+    "version": 1,
+    "name": "OrbitSampleInput",
+    "maps": [
+        {
+            "name": "OrbitSampleInput",
+            "id": "cc0fc1a2-2b18-4cda-9417-1caaa6c30945",
+            "actions": [
+                {
+                    "name": "OrbitalPointerPosition",
+                    "type": "Value",
+                    "id": "59580867-b619-4e62-98d4-3299874f3ecb",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "PressPointer",
+                    "type": "Button",
+                    "id": "25ae1a55-8f64-4c60-b6c4-53d0375258f2",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Scroll",
+                    "type": "Value",
+                    "id": "75b16b0a-66c6-4ab6-b606-1a60410bcfbd",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "MiddleMouse",
+                    "type": "Button",
+                    "id": "c33c03b1-4c9e-41b2-bb85-1305a24d749c",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "dac21cbb-0e59-4738-8fac-895fd62673ea",
+                    "path": "<Pointer>/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Touch",
+                    "action": "OrbitalPointerPosition",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "9adafd32-6751-4817-917f-eeaea230c9df",
+                    "path": "<Pointer>/press",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": ";Touch",
+                    "action": "PressPointer",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "51afde0e-9c59-4f9f-8e13-32c9ee93f895",
+                    "path": "<Mouse>/scroll",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Touch",
+                    "action": "Scroll",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "25aeb573-2580-4467-ab68-5e7b3764a6a3",
+                    "path": "<Mouse>/middleButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Touch",
+                    "action": "MiddleMouse",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": [
+        {
+            "name": "Touch",
+            "bindingGroup": "Touch",
+            "devices": []
+        }
+    ]
+}

@@ -19,9 +19,9 @@
     },
     "samples": [
       {
-        "displayName": "Samples",
+        "displayName": "Model Viewer Samples",
         "description": "Base Sample setup scene for testing",
-        "path": "Samples~/ModelViewer"
+        "path": "Samples~/ModelViewerEx"
       }
     ],
     "keywords": [
