@@ -204,6 +204,7 @@ MonoBehaviour:
   _snapToPivot: 0
   _snapToModel: 1
   _resetRotationOnShow: 0
+  _addBoxColliderOnGameObject: 1
   _activeIndex: 0
   _activeMeshViewStatus:
     ShowRenderer: 1
