@@ -13,7 +13,8 @@
       "url": "https://github.com/jshull/FP_ModelViewer.git"
     },
     "dependencies": {
-      "com.unity.mathematics": "1.3.2"
+      "com.unity.mathematics": "1.3.2",
+      "com.unity.ui": "2.0.0"
     },
     "samples": [
       {

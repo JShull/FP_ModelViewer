@@ -980,7 +980,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: com.fuzzphyte.modelviewer::FuzzPhyte.ModelViewer.FP_ModelViewerGridUI
   UseUIElements: 1
   Document: {fileID: 1953144297}
-  DocumentStyleSheet: {fileID: 4413694071827464959, guid: 42f69af059bfc9d40990bb5fa026bf7f, type: 3}
+  DocumentStyleSheet: {fileID: 4413694071827464959, guid: c56097cc25f3df54897eb43902aee89b, type: 3}
   _catalog: {fileID: 11400000, guid: cafc35c0571a10949b249d029bf511a5, type: 2}
   _hostElementName: 
   _catalogVisibleOrbitScreenRegion: {fileID: 11400000, guid: e1bfae00a44b96141a32e62e20575451, type: 2}
@@ -2077,7 +2077,7 @@ MonoBehaviour:
   m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
-  m_PanelSettings: {fileID: 11400000, guid: ed110c2c1bdeae644be585175f64a552, type: 2}
+  m_PanelSettings: {fileID: 11400000, guid: 78872ad702c6d0e4b913ff7fef8fa431, type: 2}
   m_ParentUI: {fileID: 0}
   sourceAsset: {fileID: 0}
   m_SortingOrder: 0
