@@ -1,0 +1,49 @@
+{
+    "provider": "IKEA",
+    "sourceUrl": "https://www.ikea.com/us/en/p/ivar-shelving-unit-pine-s29403845/",
+    "rootProductId": "29403845",
+    "rootArticleNumber": "29403845",
+    "downloadedUtc": "2026-08-06T06:02:26.2772772Z",
+    "models": [
+        {
+            "provider": "Ikea",
+            "productId": "29403845",
+            "articleNumber": "29403845",
+            "productName": "IVAR",
+            "variantName": "",
+            "modelUrl": "https://web-api.ikea.com/us/en/rotera/static/models/29403845-mini.glb",
+            "assetPath": "Assets/IKEAModels/29403845-IVAR/29403845-mini.glb",
+            "unityAssetPath": "Assets/IKEAModels/29403845-IVAR/29403845-mini-unity.glb"
+        },
+        {
+            "provider": "Ikea",
+            "productId": "50484651",
+            "articleNumber": "50484651",
+            "productName": "IVAR",
+            "variantName": "",
+            "modelUrl": "https://web-api.ikea.com/us/en/rotera/static/models/50484651-mini.glb",
+            "assetPath": "Assets/IKEAModels/29403845-IVAR/50484651-mini.glb",
+            "unityAssetPath": "Assets/IKEAModels/29403845-IVAR/50484651-mini-unity.glb"
+        },
+        {
+            "provider": "Ikea",
+            "productId": "30318163",
+            "articleNumber": "30318163",
+            "productName": "IVAR",
+            "variantName": "",
+            "modelUrl": "https://web-api.ikea.com/us/en/rotera/static/models/30318163-mini.glb",
+            "assetPath": "Assets/IKEAModels/29403845-IVAR/30318163-mini.glb",
+            "unityAssetPath": "Assets/IKEAModels/29403845-IVAR/30318163-mini-unity.glb"
+        },
+        {
+            "provider": "Ikea",
+            "productId": "87749600",
+            "articleNumber": "87749600",
+            "productName": "OBSERVATÖR",
+            "variantName": "",
+            "modelUrl": "https://web-api.ikea.com/us/en/rotera/static/models/87749600-mini.glb",
+            "assetPath": "Assets/IKEAModels/29403845-IVAR/87749600-mini.glb",
+            "unityAssetPath": "Assets/IKEAModels/29403845-IVAR/87749600-mini-unity.glb"
+        }
+    ]
+}

@@ -3,10 +3,20 @@
 FP Model Viewer is a data-driven catalog, thumbnail, and model-viewing package for Unity applications. It composes existing FuzzPhyte libraries instead of duplicating their responsibilities:
 
 - FP Placement supplies model display metadata, world bounds, and orbital camera behavior.
-- FP UI supplies the UI Toolkit base used by the forthcoming catalog interface.
+- FP UI supplies the UI Toolkit base used by the generated runtime catalog interface.
 - FP Utility supplies shared FuzzPhyte data conventions and runtime utilities.
 
-## Current Runtime Foundation
+The package covers the complete viewer pipeline: prepare model display data, generate thumbnail photography and catalog assets in the Editor, present those assets through a configurable paged UI Toolkit grid, filter them with reusable tags, inspect an item's available views, spawn one selected prefab into a viewing area, publish interaction events, and optionally export its readable mesh hierarchy as an OBJ package at runtime.
+
+## Documentation and Sample
+
+- [Full FP Model Viewer README](https://github.com/jshull/FP_ModelViewer/blob/main/README.md)
+- [Model Viewer sample project](https://github.com/jshull/FP_ModelViewer/tree/main/Samples/ModelViewerEx)
+- Unity menu: **FuzzPhyte > Model Viewer > Builder**
+
+The checked-in sample at `Samples/ModelViewerEx` contains a populated six-item catalog, generated viewer-item data and thumbnails, a configured `FP_ModelViewerGridUI`, tag filtering, popup actions, catalog visibility changes, spawning, and an FP Placement orbital-camera setup.
+
+## Package Foundation
 
 - `FP_ModelViewerItemData` describes one catalog item, its model metadata, reusable `FP_Tag` asset references, optional included prefab or external asset key, download URL, thumbnails, cover view, and default view.
 - `FP_ModelViewerCatalogData` stores an ordered collection of viewer items.
@@ -22,7 +32,9 @@ Item tags use `FuzzPhyte.Utility.Meta.FP_Tag` ScriptableObject references rather
 
 Existing viewer items with empty string-tag lists migrate cleanly to the asset-reference list. Any previously populated string tags must be replaced manually with the intended `FP_Tag` assets because a string cannot be mapped reliably to a unique asset reference.
 
-## Editor Generation Workflow
+## Building a Catalog
+
+The catalog data chain is `FP_ModelDisplayData` -> `FP_ModelViewerItemData` -> `FP_ModelViewerCatalogData`. Display data defines how a model is centered, bounded, scaled, and framed. Each viewer item references that display data plus its included prefab, reusable `FP_Tag` assets, thumbnails, cover view, and optional external asset metadata. The catalog stores the ordered viewer-item list consumed by `FP_ModelViewerGridUI`.
 
 Open **FuzzPhyte > Model Viewer > Builder** and:
 
@@ -69,7 +81,7 @@ Each front, back, and directional rig light has a Unity-style `Appearance` optio
 
 Prefab assets do not have to be placed in the open scene. The builder temporarily instantiates them for capture. Auto setup can add and save the binding on an editable `.prefab` asset. Imported model prefabs are immutable; place one beneath an editable wrapper prefab before running auto setup. If a prefab is skipped without producing PNGs, confirm that its root or a child contains `FP_ModelDisplayBinding` and that the binding references an `FP_ModelDisplayData` asset. The builder reports both missing requirements beside the affected source before generation.
 
-## Runtime UI Grid
+## Runtime UI Settings
 
 `FP_ModelViewerGridUI` is the first runtime catalog-viewer component. Add a `UIDocument` and `FP_ModelViewerGridUI` to a scene object, then assign the inherited `Document` reference plus a generated catalog. The document can be empty, or **Host Element Name** can target a named element inside an authored UXML document. **Document Style Sheet** is optional because the generated hierarchy includes a complete functional inline layout; when a stylesheet is assigned, Model Viewer automatically attaches it to the UIDocument root before building.
 
@@ -115,9 +127,23 @@ Enable **Show Tag Filter Button** to add a compact Filters control to the catalo
 
 **Tag Filter Columns** controls how many filter buttons appear across each row. Cells divide the available row width evenly without horizontal overflow, and the drawer scrolls vertically only. **Tag Filter Max Characters** limits visible button text and adds an ellipsis when required; the complete tag name remains available as the button tooltip. Panel width and height percentages, panel color, unselected button color, and selected button color are also configurable. `ShowTagFilterPanel`, `HideTagFilterPanel`, `ToggleTagFilterPanel`, `ToggleTagFilter`, `ClearTagFilters`, and `SetTagFilterLayout` expose the workflow to code. `CatalogTags`, `ActiveTagFilters`, and `VisibleItemCount` expose the current state, while **On Tag Filters Changed** reports the new visible-item count and the C# event supplies the active tag collection.
 
-## Planned UI Workflow
+## Item Selection, Actions, and Events
 
-The next UI slice can connect spawned items to the orbital camera/viewing workflow and generalize the remaining popup action row for project-specific actions.
+Clicking a generated catalog cell calls `SelectItem` and publishes **On Item Selected** with the selected `FP_ModelViewerItemData`. When **Show Popup On Selection** is enabled, the same interaction opens the item-detail popup and displays every available thumbnail. The selected item remains available through `SelectedItem`, so application code can update descriptions, camera focus, analytics, download state, or other project-specific UI without searching the catalog again.
+
+The popup's built-in actions publish focused lifecycle events:
+
+- **On Popup Closed** runs when the detail view is dismissed.
+- **On Item Spawned** supplies the instantiated included prefab, while **On Spawned Item Removed** supplies the viewer-owned instance being replaced or removed.
+- **On OBJ Exported** supplies the browser filename or saved path, while **On OBJ Export Failed** supplies a readable failure message. Cancelling a desktop Save File prompt publishes neither event.
+
+The grid also exposes **On Page Changed**, **On Grid Rebuilt**, **On Tag Filters Changed**, and **On Catalog Visibility Changed**. The dedicated **On Catalog Hidden** and **On Catalog Visible** Inspector events provide their configured `FP_ScreenRegionAsset`, which can coordinate the viewer with FP Placement orbital-camera input regions. Matching C# events are available for item selection, page changes, spawning/removal, popup closure, visibility, active tag filters, and OBJ delivery.
+
+Use Inspector UnityEvents for scene wiring and the C# events when another runtime system owns the behavior. The package publishes the interaction and selected data; the application decides how cameras, analytics, downloads, or other panels respond.
+
+## Extending the Viewer
+
+Use the published selection, spawn, visibility, filter, and export events to connect project-specific systems without modifying the generated catalog UI. A deployed application can use the selected item's `FP_ModelDisplayData` to update orbital-camera bounds and framing, add its own popup action controls, coordinate screen regions, or replace the included runtime spawn and OBJ-delivery behavior. The `Samples/ModelViewerEx` scene demonstrates the current FP Placement orbital-camera and screen-region wiring.
 
 ## Dependencies
 

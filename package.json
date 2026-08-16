@@ -1,6 +1,6 @@
 {
     "name": "com.fuzzphyte.modelviewer",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "displayName": "FP ModelViewer",
     "description": "FP ModelViewer builds data-driven model catalogs, thumbnails, and runtime viewing interfaces for Unity applications.",
     "unity": "6000.4",
@@ -13,14 +13,12 @@
       "url": "https://github.com/jshull/FP_ModelViewer.git"
     },
     "dependencies": {
-      "com.fuzzphyte.utility": "1.0.1",
-      "com.fuzzphyte.placement": "0.3.1",
-      "com.fuzzphyte.ui": "0.4.1"
+      "com.unity.mathematics": "1.3.2"
     },
     "samples": [
       {
         "displayName": "Model Viewer Samples",
-        "description": "Base Sample setup scene for testing",
+        "description": "Base Sample setup scene for demonstrating the orbital system integration with a catalog viewer",
         "path": "Samples~/ModelViewerEx"
       }
     ],

@@ -1,0 +1,113 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e02c375b071ccc34381cd4e8e70fd2af, type: 3}
+  m_Name: Readme
+  m_EditorClassIdentifier: com.fuzzphyte.utility.editor::FuzzPhyte.Utility.Editor.FPReadmeAsset
+  icon: {fileID: 2800000, guid: b521bf5d6ffa177458e7c14188bbf89d, type: 3}
+  title: FuzzPhyte Model Viewer
+  subtitle: A high level package that brings placement, orbital camera tools, updated
+    input system, UI Toolkit, and other FuzzPhyte utility libraries together to showcase
+    a catalog based model viewer.
+  version: 0.0.1
+  overview: 'FP Model Viewer is a data-driven Unity package for turning scene objects
+    and prefabs into deployable model catalogs. Its Editor builder uses FP Placement
+    display data to calculate model bounds, frame a capture camera, generate selected
+    face and corner thumbnails, create viewer-item and catalog ScriptableObjects,
+    preserve optional FP Tag metadata, and prepare imported meshes for runtime access.
+
+    At
+    runtime, FP Model Viewer builds a configurable, paged UI Toolkit catalog with
+    responsive styling, joined tag filtering, item-detail thumbnails, prefab spawning,
+    catalog visibility controls, interaction events, and optional OBJ downloads.
+
+    The
+    package composes FP Placement for model metadata and orbital-camera behavior,
+    FP UI for its UI Toolkit foundation, and FP Utility for shared data, tags, mesh
+    packaging, and platform-specific file delivery.'
+  overviewLinks:
+  - label: Documentation
+    url: https://github.com/JShull/FP_ModelViewer/blob/main/README.md
+  - label: Model View Sample
+    url: https://github.com/JShull/FP_ModelViewer/tree/main/Samples~/ModelViewerEx
+  - label: Open Model Viewer Builder
+    url: menu:FuzzPhyte/Model Viewer/Builder
+  sections:
+  - heading: Build a Model Catalog
+    showSeparatorBefore: 0
+    body: 'Open the Model Viewer Builder and choose an output folder and FP_ModelCaptureProfile,
+      then add scene objects or prefab assets as sources. Every source requires an
+      FP_ModelDisplayBinding with an assigned FP_ModelDisplayData asset. Auto Setup
+      Missing can calculate renderer bounds, create the required display-data asset,
+      and assign the binding automatically.
+
+      Choose any combination of the
+      14 supported face and corner thumbnail views, select a cover view, and optionally
+      assign up to three reusable FP Tag assets to each source. The builder generates
+      one FP_ModelViewerItemData asset per source and combines those items into an
+      ordered FP_ModelViewerCatalogData asset.
+
+      Each viewer item stores its
+      display data, included prefab, tags, thumbnails, cover and default views, and
+      optional external asset information. Scene-only objects are saved as reusable
+      viewer prefabs. Imported model meshes are also prepared for runtime Read/Write
+      access when possible.'
+    links:
+    - label: Catalog Documentation
+      url: https://github.com/JShull/FP_ModelViewer/blob/main/README.md#building-a-catalog
+  - heading: Configure the Runtime UI
+    showSeparatorBefore: 1
+    body: 'Add a UIDocument and FP_ModelViewerGridUI to a scene object, assign the
+      document and generated catalog, and then choose the number of rows and columns
+      to display per panel. The viewer calculates the required number of panels automatically
+      and generates only cells that contain real catalog items.
+
+      Container
+      Insets position the complete viewer within a percentage of the available screen.
+      Branding settings control the catalog title and an optional top-left, top-center,
+      or top-right logo. Item Cell, Button, Popup, and Tag Filter settings control
+      colors, rounded corners, outlines, hover and selected states, popup presentation,
+      filter columns, text truncation, and scrolling.
+
+      The catalog supports
+      joined tag filtering, so an item must contain every selected tag to remain
+      visible. It can also hide after spawning an item and provide a compact control
+      for restoring the catalog. Assign Spawn Target to define where selected included
+      prefabs are placed.
+
+      A custom stylesheet is optional. The generated interface
+      includes a complete inline layout and stable USS class names for projects that
+      require additional styling.'
+    links:
+    - label: Runtime UI Documentation
+      url: https://github.com/JShull/FP_ModelViewer/blob/main/README.md#runtime-ui-settings
+  - heading: Respon to Item Selection and Actions
+    showSeparatorBefore: 1
+    body: 'Clicking a catalog cell selects its FP_ModelViewerItemData and invokes
+      On Item Selected. When Show Popup On Selection is enabled, the same interaction
+      opens a detail popup containing every thumbnail stored for that item. SelectedItem
+      remains available to code so camera controllers, information panels, analytics,
+      audio, or other systems can respond to the active model.
+
+      The built-in
+      popup provides Back to Catalog, Spawn Item, and optional Download OBJ actions.
+      Inspector events are available for item selection, popup closure, item spawning
+      and removal, page changes, grid rebuilding, tag-filter changes, catalog visibility,
+      dedicated catalog-hidden and catalog-visible screen regions, and OBJ export
+      success or failure.
+
+      Matching C# events are available when another runtime
+      system owns the behavior. FP Model Viewer publishes the selected data and interaction
+      lifecycle while the application decides how its camera, panels, downloads,
+      or other features should respond.'
+    links:
+    - label: Section & Events
+      url: https://github.com/JShull/FP_ModelViewer/blob/main/README.md#item-selection-actions-and-events

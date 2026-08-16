@@ -1,0 +1,19 @@
+{
+    "provider": "IKEA",
+    "sourceUrl": "https://www.ikea.com/us/en/p/bror-utility-cart-gray-green-pine-plywood-80547384/",
+    "rootProductId": "80547384",
+    "rootArticleNumber": "80547384",
+    "downloadedUtc": "2026-08-06T06:27:56.2607112Z",
+    "models": [
+        {
+            "provider": "Ikea",
+            "productId": "80547384",
+            "articleNumber": "80547384",
+            "productName": "BROR",
+            "variantName": "",
+            "modelUrl": "https://web-api.ikea.com/us/en/rotera/static/models/80547384-mini.glb",
+            "assetPath": "Assets/IKEAModels/80547384-BROR/80547384-mini.glb",
+            "unityAssetPath": "Assets/IKEAModels/80547384-BROR/80547384-mini-unity.glb"
+        }
+    ]
+}

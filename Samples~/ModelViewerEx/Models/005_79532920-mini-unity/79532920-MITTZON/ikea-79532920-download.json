@@ -1,0 +1,14 @@
+{
+    "sourceUrl": "https://www.ikea.com/us/en/p/mittzon-conference-table-oak-veneer-white-s79532920/",
+    "rootArticleNumber": "79532920",
+    "downloadedUtc": "2026-08-06T03:56:41.5300824Z",
+    "models": [
+        {
+            "articleNumber": "79532920",
+            "productName": "MITTZON",
+            "modelUrl": "https://web-api.ikea.com/us/en/rotera/static/models/79532920-mini.glb",
+            "assetPath": "Assets/IKEAModels/79532920-MITTZON/79532920-mini.glb",
+            "unityAssetPath": "Assets/IKEAModels/79532920-MITTZON/79532920-mini-unity.glb"
+        }
+    ]
+}
