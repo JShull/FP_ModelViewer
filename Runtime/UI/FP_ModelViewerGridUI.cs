@@ -86,6 +86,10 @@ namespace FuzzPhyte.ModelViewer
         public const string PopupSpawnButtonClass = "fp-model-viewer-popup__spawn";
         public const string PopupObjExportButtonClass = "fp-model-viewer-popup__obj-export";
         public const string CatalogVisibilityButtonClass = "fp-model-viewer-grid__visibility-toggle";
+        public const string CompanionUiOffButtonClass =
+            "fp-model-viewer-grid__companion-ui-off";
+        public const string CompanionUiOnButtonClass =
+            "fp-model-viewer-grid__companion-ui-on";
         public const string TagFilterToggleClass = "fp-model-viewer-filter__toggle";
         public const string TagFilterPanelClass = "fp-model-viewer-filter__panel";
         public const string TagFilterHeaderClass = "fp-model-viewer-filter__header";
@@ -135,6 +139,12 @@ namespace FuzzPhyte.ModelViewer
         [SerializeField] private string _showCatalogLabel = "Show Catalog";
         [SerializeField, Tooltip("Hide the catalog after a successful spawn so the model remains unobstructed.")]
         private bool _hideCatalogAfterSpawn;
+
+        [Header("Companion UI Toggle")]
+        [SerializeField, Tooltip("Show paired Off and On action buttons at the lower-right of the UI host.")]
+        private bool _showCompanionUiToggleButtons = true;
+        [SerializeField] private string _companionUiOffButtonLabel = "Off";
+        [SerializeField] private string _companionUiOnButtonLabel = "On";
 
         [Header("Tag Filters")]
         [SerializeField] private bool _showTagFilterButton = true;
@@ -227,6 +237,8 @@ namespace FuzzPhyte.ModelViewer
             new FP_ModelViewerStringUnityEvent();
         [SerializeField] private FP_ModelViewerStringUnityEvent _onObjExportFailed =
             new FP_ModelViewerStringUnityEvent();
+        [SerializeField] private UnityEvent _onCompanionUiTurnedOff = new UnityEvent();
+        [SerializeField] private UnityEvent _onCompanionUiTurnedOn = new UnityEvent();
 
         private readonly List<VisualElement> _panels = new List<VisualElement>();
         private readonly List<FP_Tag> _catalogTags = new List<FP_Tag>();
@@ -243,6 +255,8 @@ namespace FuzzPhyte.ModelViewer
         private Button _popupSpawnButton;
         private Button _popupObjExportButton;
         private Button _catalogVisibilityButton;
+        private Button _companionUiOffButton;
+        private Button _companionUiOnButton;
         private Button _tagFilterToggleButton;
         private Button _tagFilterClearButton;
         private VisualElement _tagFilterPanel;
@@ -255,6 +269,7 @@ namespace FuzzPhyte.ModelViewer
         private int _currentPageIndex;
         private bool _hasAwakened;
         private bool _isCatalogVisible = true;
+        private bool _isCompanionUiOn = true;
         private bool _isTagFilterPanelVisible;
 
         public event Action<FP_ModelViewerItemData> ItemSelected;
@@ -266,6 +281,8 @@ namespace FuzzPhyte.ModelViewer
         public event Action<IReadOnlyList<FP_Tag>> TagFiltersChanged;
         public event Action<string> ObjExported;
         public event Action<string> ObjExportFailed;
+        public event Action CompanionUiTurnedOff;
+        public event Action CompanionUiTurnedOn;
 
         public FP_ModelViewerCatalogData Catalog => _catalog;
         public int Rows => _rows;
@@ -300,6 +317,7 @@ namespace FuzzPhyte.ModelViewer
         public GameObject SpawnedItem => _spawnedItem;
         public bool IsPopupOpen => _popupOverlay != null;
         public bool IsCatalogVisible => _isCatalogVisible;
+        public bool IsCompanionUiOn => _isCompanionUiOn;
         public bool IsTagFilterPanelVisible => _isTagFilterPanelVisible;
         public int VisibleItemCount => _visibleItems.Count;
         public IReadOnlyList<FP_Tag> CatalogTags => _catalogTags;
@@ -319,6 +337,8 @@ namespace FuzzPhyte.ModelViewer
         public FP_ModelViewerFilterUnityEvent OnTagFiltersChanged => _onTagFiltersChanged;
         public FP_ModelViewerStringUnityEvent OnObjExported => _onObjExported;
         public FP_ModelViewerStringUnityEvent OnObjExportFailed => _onObjExportFailed;
+        public UnityEvent OnCompanionUiTurnedOff => _onCompanionUiTurnedOff;
+        public UnityEvent OnCompanionUiTurnedOn => _onCompanionUiTurnedOn;
 
         public override void Awake()
         {
@@ -652,6 +672,38 @@ namespace FuzzPhyte.ModelViewer
             return SetCatalogVisibility(!_isCatalogVisible);
         }
 
+        public bool TurnCompanionUiOff()
+        {
+            return SetCompanionUiState(false);
+        }
+
+        public bool TurnCompanionUiOn()
+        {
+            return SetCompanionUiState(true);
+        }
+
+        public bool SetCompanionUiState(bool isOn)
+        {
+            if (_isCompanionUiOn == isOn)
+            {
+                return false;
+            }
+
+            _isCompanionUiOn = isOn;
+            ApplyCompanionUiButtonVisibility();
+            if (_isCompanionUiOn)
+            {
+                _onCompanionUiTurnedOn.Invoke();
+                CompanionUiTurnedOn?.Invoke();
+            }
+            else
+            {
+                _onCompanionUiTurnedOff.Invoke();
+                CompanionUiTurnedOff?.Invoke();
+            }
+            return true;
+        }
+
         /// <summary>
         /// Builds into a supplied host. This is also useful when a caller owns the UIDocument setup.
         /// </summary>
@@ -673,6 +725,7 @@ namespace FuzzPhyte.ModelViewer
             BuildNavigation();
             BuildTagFilterControls();
             BuildCatalogVisibilityButton();
+            BuildCompanionUiToggleButtons();
             ShowPage(_currentPageIndex, false);
             ApplyCatalogVisibility();
             ApplyGeneratedButtonStyle();
@@ -1297,6 +1350,14 @@ namespace FuzzPhyte.ModelViewer
             {
                 ApplyControlButtonStyle(_catalogVisibilityButton);
             }
+            if (_companionUiOffButton != null)
+            {
+                ApplyControlButtonStyle(_companionUiOffButton);
+            }
+            if (_companionUiOnButton != null)
+            {
+                ApplyControlButtonStyle(_companionUiOnButton);
+            }
         }
 
         private void ApplyGeneratedButtonStyle(VisualElement root)
@@ -1550,6 +1611,63 @@ namespace FuzzPhyte.ModelViewer
             _catalogVisibilityButton.style.minWidth = 110f;
             _host.Add(_catalogVisibilityButton);
             UpdateCatalogVisibilityButton();
+        }
+
+        private void BuildCompanionUiToggleButtons()
+        {
+            if (!_showCompanionUiToggleButtons || _host == null)
+            {
+                return;
+            }
+
+            _companionUiOffButton = CreateCompanionUiButton(
+                "FPModelViewerCompanionUiOff",
+                _companionUiOffButtonLabel,
+                CompanionUiOffButtonClass,
+                TurnCompanionUiOff);
+            _companionUiOnButton = CreateCompanionUiButton(
+                "FPModelViewerCompanionUiOn",
+                _companionUiOnButtonLabel,
+                CompanionUiOnButtonClass,
+                TurnCompanionUiOn);
+            _host.Add(_companionUiOffButton);
+            _host.Add(_companionUiOnButton);
+            ApplyCompanionUiButtonVisibility();
+        }
+
+        private static Button CreateCompanionUiButton(
+            string name,
+            string label,
+            string className,
+            Func<bool> action)
+        {
+            var button = new Button(() => action())
+            {
+                name = name,
+                text = label
+            };
+            button.AddToClassList(className);
+            button.style.position = Position.Absolute;
+            button.style.right = 12f;
+            button.style.bottom = 12f;
+            button.style.minWidth = 110f;
+            return button;
+        }
+
+        private void ApplyCompanionUiButtonVisibility()
+        {
+            if (_companionUiOffButton != null)
+            {
+                _companionUiOffButton.style.display = _isCompanionUiOn
+                    ? DisplayStyle.Flex
+                    : DisplayStyle.None;
+            }
+            if (_companionUiOnButton != null)
+            {
+                _companionUiOnButton.style.display = _isCompanionUiOn
+                    ? DisplayStyle.None
+                    : DisplayStyle.Flex;
+            }
         }
 
         private bool SetCatalogVisibility(bool visible)
@@ -1981,6 +2099,14 @@ namespace FuzzPhyte.ModelViewer
             {
                 _catalogVisibilityButton.RemoveFromHierarchy();
             }
+            if (_companionUiOffButton != null)
+            {
+                _companionUiOffButton.RemoveFromHierarchy();
+            }
+            if (_companionUiOnButton != null)
+            {
+                _companionUiOnButton.RemoveFromHierarchy();
+            }
             if (_logoContainer != null)
             {
                 _logoContainer.RemoveFromHierarchy();
@@ -1996,6 +2122,8 @@ namespace FuzzPhyte.ModelViewer
             _pageLabel = null;
             _navigation = null;
             _catalogVisibilityButton = null;
+            _companionUiOffButton = null;
+            _companionUiOnButton = null;
             _tagFilterToggleButton = null;
             _tagFilterClearButton = null;
             _tagFilterPanel = null;

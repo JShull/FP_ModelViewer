@@ -400,6 +400,72 @@ namespace FuzzPhyte.ModelViewer.Tests
         }
 
         [Test]
+        public void CompanionUiToggle_StartsWithOffActionAndPublishesBothStates()
+        {
+            var gameObject = new GameObject("Model Viewer Companion UI Test");
+            gameObject.SetActive(false);
+            var host = new VisualElement();
+            int unityOffCount = 0;
+            int unityOnCount = 0;
+            int csharpOffCount = 0;
+            int csharpOnCount = 0;
+
+            try
+            {
+                FP_ModelViewerGridUI grid = gameObject.AddComponent<FP_ModelViewerGridUI>();
+                grid.OnCompanionUiTurnedOff.AddListener(() => unityOffCount++);
+                grid.OnCompanionUiTurnedOn.AddListener(() => unityOnCount++);
+                grid.CompanionUiTurnedOff += () => csharpOffCount++;
+                grid.CompanionUiTurnedOn += () => csharpOnCount++;
+                grid.Build(host);
+
+                Button offButton = host.Q<Button>(
+                    className: FP_ModelViewerGridUI.CompanionUiOffButtonClass);
+                Button onButton = host.Q<Button>(
+                    className: FP_ModelViewerGridUI.CompanionUiOnButtonClass);
+
+                Assert.That(offButton, Is.Not.Null);
+                Assert.That(onButton, Is.Not.Null);
+                Assert.That(grid.IsCompanionUiOn, Is.True);
+                Assert.That(offButton.text, Is.EqualTo("Off"));
+                Assert.That(onButton.text, Is.EqualTo("On"));
+                Assert.That(offButton.style.display.value, Is.EqualTo(DisplayStyle.Flex));
+                Assert.That(onButton.style.display.value, Is.EqualTo(DisplayStyle.None));
+                Assert.That(offButton.style.right.value.value, Is.EqualTo(12f));
+                Assert.That(offButton.style.bottom.value.value, Is.EqualTo(12f));
+
+                Assert.That(grid.TurnCompanionUiOff(), Is.True);
+                Assert.That(grid.IsCompanionUiOn, Is.False);
+                Assert.That(offButton.style.display.value, Is.EqualTo(DisplayStyle.None));
+                Assert.That(onButton.style.display.value, Is.EqualTo(DisplayStyle.Flex));
+                Assert.That(unityOffCount, Is.EqualTo(1));
+                Assert.That(csharpOffCount, Is.EqualTo(1));
+                Assert.That(grid.TurnCompanionUiOff(), Is.False);
+                Assert.That(unityOffCount, Is.EqualTo(1));
+                Assert.That(csharpOffCount, Is.EqualTo(1));
+
+                grid.Refresh();
+                offButton = host.Q<Button>(
+                    className: FP_ModelViewerGridUI.CompanionUiOffButtonClass);
+                onButton = host.Q<Button>(
+                    className: FP_ModelViewerGridUI.CompanionUiOnButtonClass);
+                Assert.That(offButton.style.display.value, Is.EqualTo(DisplayStyle.None));
+                Assert.That(onButton.style.display.value, Is.EqualTo(DisplayStyle.Flex));
+
+                Assert.That(grid.TurnCompanionUiOn(), Is.True);
+                Assert.That(grid.IsCompanionUiOn, Is.True);
+                Assert.That(offButton.style.display.value, Is.EqualTo(DisplayStyle.Flex));
+                Assert.That(onButton.style.display.value, Is.EqualTo(DisplayStyle.None));
+                Assert.That(unityOnCount, Is.EqualTo(1));
+                Assert.That(csharpOnCount, Is.EqualTo(1));
+            }
+            finally
+            {
+                Object.DestroyImmediate(gameObject);
+            }
+        }
+
+        [Test]
         public void SpawnSelectedItem_ReplacesPreviouslySpawnedItem()
         {
             var gameObject = new GameObject("Model Viewer Replacement Test");

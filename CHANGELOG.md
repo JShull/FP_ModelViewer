@@ -7,11 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.2.0] - 2026-08-16
+## [0.2.0] - 2026-08-17
 
 ### 0.2.0 Added
 
 - [@JShull](https://github.com/jshull)
+  - Added lower-right companion UI Off/On action buttons with mutually exclusive visibility, Inspector UnityEvents, matching C# events, and runtime state APIs.
   - Readme file internal editor updates
   - Readme.md file updates
   - Repository went public
