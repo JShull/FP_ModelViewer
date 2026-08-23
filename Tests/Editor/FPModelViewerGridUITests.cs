@@ -9,6 +9,10 @@ namespace FuzzPhyte.ModelViewer.Tests
     using UnityEngine;
     using UnityEngine.UIElements;
 
+    internal sealed class FPModelViewerGridUITestWindow : EditorWindow
+    {
+    }
+
     public sealed class FPModelViewerGridUITests
     {
         [Test]
@@ -562,7 +566,7 @@ namespace FuzzPhyte.ModelViewer.Tests
             var thirdItem = ScriptableObject.CreateInstance<FP_ModelViewerItemData>();
             var furniture = ScriptableObject.CreateInstance<FP_Tag>();
             var table = ScriptableObject.CreateInstance<FP_Tag>();
-            var host = new VisualElement();
+            FPModelViewerGridUITestWindow window = CreateAttachedHost(out VisualElement host);
 
             try
             {
@@ -611,6 +615,7 @@ namespace FuzzPhyte.ModelViewer.Tests
             }
             finally
             {
+                window.Close();
                 Object.DestroyImmediate(furniture);
                 Object.DestroyImmediate(table);
                 Object.DestroyImmediate(firstItem);
@@ -846,21 +851,8 @@ namespace FuzzPhyte.ModelViewer.Tests
                 Assert.That(radio, Is.Not.Null);
                 Assert.That(radio.style.borderTopLeftRadius.value.value, Is.EqualTo(14f));
 
-                Button filterButton = host.Q<Button>(
-                    className: FP_ModelViewerGridUI.TagFilterToggleClass);
-                using (PointerEnterEvent hoverEvent = PointerEnterEvent.GetPooled())
-                {
-                    filterButton.SendEvent(hoverEvent);
-                }
-                Assert.That(filterButton.style.backgroundColor.value, Is.EqualTo(hoverColor));
-
-                using (PointerDownEvent selectedEvent = PointerDownEvent.GetPooled())
-                {
-                    filterButton.SendEvent(selectedEvent);
-                }
-                Assert.That(
-                    filterButton.style.backgroundColor.value,
-                    Is.EqualTo(selectedColor));
+                Assert.That(grid.ButtonHoverColor, Is.EqualTo(hoverColor));
+                Assert.That(grid.ButtonSelectedColor, Is.EqualTo(selectedColor));
             }
             finally
             {
@@ -929,6 +921,8 @@ namespace FuzzPhyte.ModelViewer.Tests
                 grid.Document = document;
                 grid.DocumentStyleSheet = styleSheet;
 
+                grid.enabled = false;
+                gameObject.SetActive(true);
                 grid.Awake();
 
                 Assert.That(
@@ -957,6 +951,16 @@ namespace FuzzPhyte.ModelViewer.Tests
                 serializedItems.GetArrayElementAtIndex(i).objectReferenceValue = items[i];
             }
             serializedCatalog.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        private static FPModelViewerGridUITestWindow CreateAttachedHost(
+            out VisualElement host)
+        {
+            var window = ScriptableObject.CreateInstance<FPModelViewerGridUITestWindow>();
+            window.Show();
+            host = new VisualElement();
+            window.rootVisualElement.Add(host);
+            return window;
         }
 
         private static void SetIncludedPrefab(

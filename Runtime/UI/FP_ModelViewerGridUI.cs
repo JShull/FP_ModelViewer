@@ -361,11 +361,12 @@ namespace FuzzPhyte.ModelViewer
             }
 
             RootContainer = Document.rootVisualElement;
-            if (DocumentStyleSheet != null &&
-                !RootContainer.styleSheets.Contains(DocumentStyleSheet))
+            if (RootContainer == null)
             {
-                RootContainer.styleSheets.Add(DocumentStyleSheet);
+                return;
             }
+
+            AttachDocumentStyleSheet();
         }
 
         private void OnEnable()
@@ -386,6 +387,7 @@ namespace FuzzPhyte.ModelViewer
             if (Document != null)
             {
                 RootContainer = Document.rootVisualElement;
+                AttachDocumentStyleSheet();
             }
             if (RootContainer == null)
             {
@@ -404,6 +406,16 @@ namespace FuzzPhyte.ModelViewer
             }
 
             Build(host);
+        }
+
+        private void AttachDocumentStyleSheet()
+        {
+            if (RootContainer != null &&
+                DocumentStyleSheet != null &&
+                !RootContainer.styleSheets.Contains(DocumentStyleSheet))
+            {
+                RootContainer.styleSheets.Add(DocumentStyleSheet);
+            }
         }
 
         private void OnValidate()

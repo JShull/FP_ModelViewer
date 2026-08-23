@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Guarded Model Viewer UI setup when an assigned inactive `UIDocument` has not
+  created its root visual element yet; setup retries through the existing
+  enable lifecycle.
+
 ## [0.2.0] - 2026-08-17
 
 ### 0.2.0 Added

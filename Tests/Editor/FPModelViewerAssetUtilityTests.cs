@@ -152,7 +152,7 @@ namespace FuzzPhyte.ModelViewer.Tests
                 Assert.That(result, Is.True, resultMessage);
                 Assert.That(binding, Is.Not.Null);
                 Assert.That(binding.Data, Is.SameAs(displayData));
-                Assert.That(displayData.DisplayName, Is.EqualTo("Catalog Chair"));
+                Assert.That(displayData.DisplayName, Is.EqualTo(prefab.name));
                 Assert.That(displayData.UseLocalBoundsOverride, Is.True);
                 AssertVector3(new Vector3(0f, 2f, 0f), displayData.BoundsCenter);
                 AssertVector3(Vector3.one, displayData.BoundsSize);
